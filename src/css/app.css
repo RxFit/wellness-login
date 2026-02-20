@@ -176,6 +176,20 @@ h1, h2, h3, h4, h5, h6 {
   margin: 0 0 24px 0;
 }
 
+.splash-logo-badge {
+  width: 200px;
+  height: auto;
+  object-fit: contain;
+  margin-bottom: 24px;
+}
+
+.healthkit-logo-badge {
+  width: 120px;
+  height: auto;
+  object-fit: contain;
+  margin-bottom: 20px;
+}
+
 .logo {
   width: 96px;
   height: 96px;
@@ -525,11 +539,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .footer {
-  position: absolute;
-  bottom: 40px;
-  left: 0;
-  right: 0;
   text-align: center;
+  margin-top: 32px;
+  padding-bottom: 24px;
 }
 
 .footer p {
