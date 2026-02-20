@@ -57,6 +57,12 @@ class RxFitApp {
     const biometricBtn = document.getElementById('biometric-btn');
     biometricBtn.addEventListener('click', () => this.handleBiometricLogin());
 
+    const openHealthSettingsBtn = document.getElementById('open-health-settings-btn');
+    openHealthSettingsBtn.addEventListener('click', () => this.openHealthSettings());
+
+    const skipDeniedBtn = document.getElementById('skip-denied-btn');
+    skipDeniedBtn.addEventListener('click', () => this.loadWebApp());
+
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible' && this.auth.isAuthenticated()) {
         this.healthkit.syncNewData();
@@ -291,12 +297,24 @@ class RxFitApp {
       if (granted) {
         await this.healthkit.performInitialSync();
         this.healthkit.startBackgroundDelivery();
+        this.loadWebApp();
+      } else {
+        btn.disabled = false;
+        btn.textContent = 'Enable Health Sync';
+        this.screens.show('healthkitDenied');
       }
     } catch (err) {
       console.error('HealthKit connection error:', err);
+      btn.disabled = false;
+      btn.textContent = 'Enable Health Sync';
+      this.screens.show('healthkitDenied');
     }
+  }
 
-    this.loadWebApp();
+  openHealthSettings() {
+    if (this.isNative && window.Capacitor?.Plugins?.Browser) {
+      window.Capacitor.Plugins.Browser.open({ url: 'x-apple-health://' });
+    }
   }
 
   loadWebApp() {

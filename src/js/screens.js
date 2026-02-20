@@ -4,6 +4,7 @@ export class ScreenManager {
       splash: document.getElementById('splash-screen'),
       login: document.getElementById('login-screen'),
       healthkit: document.getElementById('healthkit-screen'),
+      healthkitDenied: document.getElementById('healthkit-denied-screen'),
       loading: document.getElementById('loading-screen'),
       webview: document.getElementById('webview-screen'),
     };

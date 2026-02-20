@@ -233,6 +233,17 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--text-muted);
 }
 
+.login-hint {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-muted);
+  opacity: 0.7;
+  margin-top: 12px;
+  text-align: center;
+  max-width: 260px;
+  line-height: 1.4;
+}
+
 .app-description {
   font-family: var(--font-body);
   font-size: 16px;
@@ -605,6 +616,54 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-body);
   color: var(--text-foreground);
   line-height: 1.4;
+}
+
+#healthkit-denied-screen.active {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.denied-info {
+  width: 100%;
+  max-width: 340px;
+  margin-bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.denied-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.denied-step-number {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: rgba(232, 180, 48, 0.12);
+  color: var(--accent-gold);
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.denied-step-text {
+  font-size: 14px;
+  font-family: var(--font-body);
+  color: var(--text-foreground);
+  line-height: 1.5;
+  padding-top: 3px;
+}
+
+.denied-step-text strong {
+  color: var(--text-foreground);
+  font-weight: 600;
 }
 
 .section-label {

@@ -44,6 +44,7 @@
           </div>
           <h1 class="app-title">Wellness</h1>
           <p class="app-subtitle">Industrial Athlete</p>
+          <p class="login-hint">Sign in with the account you created on app.rxfit.ai</p>
         </div>
 
         <form id="login-form" class="login-form">
@@ -135,6 +136,43 @@
 
         <div class="footer">
           <p>Your data is encrypted and securely transmitted</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="healthkit-denied-screen" class="screen">
+      <div class="healthkit-container">
+        <div class="logo-section">
+          <div class="logo small">
+            <div class="logo-inner">
+              <div class="logo-top"><span class="logo-rx">RxFit</span></div>
+              <div class="logo-bottom"><span class="logo-ai">AI</span></div>
+            </div>
+          </div>
+          <h1 class="app-title medium">Health Access Needed</h1>
+          <p class="app-description">To give your coach the best insights, RxFit needs access to your Apple Health data.</p>
+        </div>
+
+        <div class="denied-info">
+          <div class="denied-step">
+            <span class="denied-step-number">1</span>
+            <span class="denied-step-text">Open your iPhone <strong>Settings</strong></span>
+          </div>
+          <div class="denied-step">
+            <span class="denied-step-number">2</span>
+            <span class="denied-step-text">Tap <strong>Health</strong> &rarr; <strong>Data Access & Devices</strong></span>
+          </div>
+          <div class="denied-step">
+            <span class="denied-step-number">3</span>
+            <span class="denied-step-text">Find <strong>RxFit Wellness</strong> and enable all categories</span>
+          </div>
+        </div>
+
+        <button id="open-health-settings-btn" class="primary-btn">Open Health Settings</button>
+        <button id="skip-denied-btn" class="ghost-btn">Skip for Now</button>
+
+        <div class="footer">
+          <p>You can connect Apple Health anytime from the app</p>
         </div>
       </div>
     </div>
