@@ -9,8 +9,15 @@ const config: CapacitorConfig = {
     backgroundColor: '#0C1217',
     scheme: 'RxFit Wellness',
     preferredContentMode: 'mobile',
+    allowsLinkPreview: false,
+  },
+  server: {
+    allowNavigation: ['app.rxfit.ai', '*.rxfit.ai'],
   },
   plugins: {
+    CapacitorHttp: {
+      enabled: true,
+    },
     Preferences: {
       group: 'com.rxfit.wellness',
     },

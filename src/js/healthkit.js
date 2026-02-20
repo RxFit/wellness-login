@@ -1,3 +1,5 @@
+import { nativeFetch } from './http.js';
+
 export class HealthKitService {
   constructor(apiBase) {
     this.apiBase = apiBase;
@@ -98,10 +100,9 @@ export class HealthKitService {
 
     for (const batch of batches) {
       try {
-        const response = await fetch(`${this.apiBase}/api/healthkit/sync`, {
+        const response = await nativeFetch(`${this.apiBase}/api/healthkit/sync`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
           body: JSON.stringify({
             samples: batch,
             deviceInfo: deviceInfo || {
@@ -134,9 +135,7 @@ export class HealthKitService {
 
   async checkStatus() {
     try {
-      const response = await fetch(`${this.apiBase}/api/healthkit/status`, {
-        credentials: 'include',
-      });
+      const response = await nativeFetch(`${this.apiBase}/api/healthkit/status`);
       if (response.ok) {
         return await response.json();
       }
@@ -148,9 +147,8 @@ export class HealthKitService {
 
   async disconnect() {
     try {
-      await fetch(`${this.apiBase}/api/healthkit/disconnect`, {
+      await nativeFetch(`${this.apiBase}/api/healthkit/disconnect`, {
         method: 'POST',
-        credentials: 'include',
       });
     } catch (err) {
       console.error('Disconnect error:', err);

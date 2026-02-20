@@ -1,3 +1,5 @@
+import { nativeFetch } from './http.js';
+
 export class AuthService {
   constructor(apiBase) {
     this.apiBase = apiBase;
@@ -7,11 +9,10 @@ export class AuthService {
 
   async login(email, password) {
     try {
-      const response = await fetch(`${this.apiBase}/api/auth/client-login`, {
+      const response = await nativeFetch(`${this.apiBase}/api/auth/client-login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
-        credentials: 'include',
       });
 
       if (response.ok) {
@@ -36,9 +37,7 @@ export class AuthService {
     if (!hasLocal) return false;
 
     try {
-      const response = await fetch(`${this.apiBase}/api/healthkit/status`, {
-        credentials: 'include',
-      });
+      const response = await nativeFetch(`${this.apiBase}/api/healthkit/status`);
       if (response.ok) {
         this.authenticated = true;
         return true;
