@@ -103,6 +103,14 @@ rxfit-wellness/
 - 2026-02-20: Added NSFaceIDUsageDescription to Info.plist
 - 2026-02-20: Added login helper text ("Sign in with the account you created on app.rxfit.ai")
 - 2026-02-20: Added HealthKit denial recovery screen with numbered steps and Settings deep-link
+- 2026-02-20: **Pre-App Store audit completed — 7 issues fixed:**
+  - CRITICAL: Removed dev test login bypass (test@rxfit.ai/test123) from auth.js
+  - CRITICAL: Migrated healthkit.js state (prompted, lastSync) from localStorage to Capacitor Preferences
+  - HIGH: Aligned @capacitor/cli to v8.1.0 (was 7.x, mismatched core/ios 8.x)
+  - HIGH: Removed NSHealthUpdateUsageDescription from Info.plist (app is read-only)
+  - MEDIUM: Added null guards for all DOM queries in app.js bindEvents/handlers
+  - MEDIUM: Safe unwrapped force-unwrapped URLs in AppDelegate.swift
+  - MEDIUM: Fixed invalid URL scheme "RxFit Wellness" → "rxfitwellness" in capacitor.config.ts
 
 ## User Preferences
 - Design aesthetic: "Clinical Luxury" — clean, minimal, high-end medical/wellness feel
