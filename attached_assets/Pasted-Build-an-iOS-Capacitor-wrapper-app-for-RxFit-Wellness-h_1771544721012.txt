@@ -1,0 +1,112 @@
+Build an iOS Capacitor wrapper app for RxFit Wellness (https://app.rxfit.ai) — a B2B2C wellness coaching platform for Industrial Athletes.
+
+## App Overview
+This is a native iOS shell that:
+1. Shows a branded native login/splash screen with the RxFit AI logo
+2. Requests HealthKit permissions during onboarding
+3. Loads the full web app (https://app.rxfit.ai) in a WKWebView after authentication
+4. Syncs HealthKit data to the backend API on a recurring schedule
+
+## Authentication Flow
+- The web app supports email/password login at https://app.rxfit.ai/client-login
+- After the native login screen collects credentials, POST to https://app.rxfit.ai/api/auth/client-login with { email, password }
+- On success, the response sets a session cookie — pass this cookie into the WKWebView so the user is authenticated when the web app loads
+- If already authenticated (cookie still valid), skip login and go straight to the WebView
+
+## HealthKit Integration
+
+### Data Types to Read (all READ-only, we never write to HealthKit):
+- HKQuantityType: heartRate, restingHeartRate, heartRateVariabilitySDNN, stepCount, activeEnergyBurned, basalEnergyBurned, distanceWalkingRunning, bodyMass, bodyFatPercentage, oxygenSaturation, respiratoryRate, vo2Max
+- HKCategoryType: sleepAnalysis (with sleep stages: deep, REM, core/light, awake)
+- HKWorkoutType: workout
+
+### Sync API Endpoint
+POST https://app.rxfit.ai/api/healthkit/sync
+Headers: Cookie (session cookie from login)
+Body JSON:
+{
+  "samples": [
+    {
+      "sampleType": "heartRate",        // matches HealthKit type names above
+      "value": 72,                       // numeric value
+      "valueFloat": "72.0",              // string float for precision
+      "unit": "count/min",               // HealthKit unit string
+      "startDate": "2026-02-19T10:30:00.000Z",  // ISO 8601
+      "endDate": "2026-02-19T10:30:00.000Z",    // ISO 8601 (optional)
+      "sourceName": "Apple Watch",       // device source (optional)
+      "sourceId": "com.apple.health",    // bundle ID (optional)
+      "metadata": {}                     // any extra metadata (optional, used for sleep stages)
+    }
+  ],
+  "deviceInfo": {
+    "model": "iPhone 15",
+    "systemVersion": "18.2",
+    "appVersion": "1.0.0"
+  }
+}
+
+Maximum 5000 samples per request. If more, batch into multiple requests.
+
+### Sleep Analysis Special Handling
+For sleepAnalysis samples, include the sleep stage in metadata:
+{
+  "sampleType": "sleepAnalysis",
+  "value": 1,
+  "startDate": "...",
+  "endDate": "...",
+  "metadata": { "sleepStage": "deep" }   // values: "deep", "rem", "core", "light", "awake", "asleep"
+}
+
+### Sync Strategy
+- On first launch after HealthKit permission granted: sync last 14 days of data
+- Background sync: use HealthKit background delivery (HKObserverQuery) for heartRate, stepCount, and sleepAnalysis
+- Foreground sync: when app becomes active, sync any new data since last sync
+- Store lastSyncDate in UserDefaults to avoid re-syncing old data
+- Deduplicate by checking startDate + sampleType before sending
+
+### HealthKit Status Check
+GET https://app.rxfit.ai/api/healthkit/status
+Returns: { connected: boolean, lastSyncAt: string | null, latestSamples: {...} }
+
+### Disconnect
+POST https://app.rxfit.ai/api/healthkit/disconnect
+Clears the HealthKit connection flag on the server
+
+## Branding & Design
+- App name: "RxFit Wellness"
+- Bundle ID suggestion: com.rxfit.wellness
+- Primary colors: Dark blue-grey (#1a1f2e) background, Gold/Amber (#c8a04a) accents, White text
+- Typography: Inter for body text
+- App icon: Use the RxFit AI logo (dark background with gold "Rx" and white "AI" text, gold border, rounded corners)
+- Launch screen: Dark blue-grey background with centered RxFit AI logo
+
+## Native Login Screen Design
+- Dark blue-grey (#1a1f2e) full-screen background
+- RxFit AI logo centered in the top third
+- "RxFit Wellness" title in white, Inter font
+- "Industrial Athlete" subtitle in gold (#c8a04a)
+- Email input field with dark styling
+- Password input field with dark styling
+- "Sign In" button in gold (#c8a04a) with dark text
+- "Powered by RxFit AI" subtle footer text
+
+## Privacy Descriptions (for Info.plist)
+These are required by Apple and should clearly explain WHY we need each data type:
+
+- NSHealthShareUsageDescription: "RxFit Wellness reads your health data to provide personalized coaching insights, track your heart rate zones during workouts, monitor recovery through sleep and HRV analysis, and help your coach optimize your training program."
+- NSHealthUpdateUsageDescription: (not needed — we only read, never write)
+
+## App Store Review Notes
+- This app is a companion to the RxFit Wellness coaching platform
+- HealthKit data is used to: (1) calculate personalized heart rate training zones using the Karvonen formula, (2) track workout compliance and active minutes, (3) monitor sleep quality and recovery metrics, (4) provide AI-powered coaching recommendations through our Ada wellness coach
+- Data is transmitted securely over HTTPS and stored on our servers to enable coach-athlete collaboration
+- Users must have an active RxFit Wellness account to use the app
+- The web content displayed is our own platform at app.rxfit.ai, not third-party content
+
+## Technical Requirements
+- Minimum iOS version: 16.0
+- Capacitor 6+ 
+- Swift for native HealthKit plugin
+- WKWebView for web content
+- Keychain storage for session persistence
+- Background modes: Background fetch, Remote notifications
