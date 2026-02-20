@@ -1,5 +1,6 @@
 :root {
-  --bg-primary: #1a1f2e;
+  --bg-dark: #1a1f2e;
+  --bg-light: #f5f6f8;
   --bg-secondary: #242938;
   --bg-input: #2a3040;
   --accent-gold: #c8a04a;
@@ -7,8 +8,21 @@
   --text-primary: #ffffff;
   --text-secondary: #a0a8b8;
   --text-muted: #6b7280;
-  --error-red: #ef4444;
-  --border-color: #353b4a;
+  --error-red: #D94040;
+  --border-color: rgba(255, 255, 255, 0.08);
+
+  --engagement-green: #3B9A5C;
+  --engagement-yellow: #E6A935;
+  --engagement-red: #D94040;
+
+  --hr-recovery: #9CA3AF;
+  --hr-fatburn: #3B82F6;
+  --hr-cardio: #F97316;
+  --hr-peak: #EF4444;
+
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-heading: 'JetBrains Mono', monospace;
+  --radius: 0.25rem;
 }
 
 * {
@@ -21,8 +35,8 @@ html, body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background-color: var(--bg-primary);
+  font-family: var(--font-body);
+  background-color: var(--bg-dark);
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -33,6 +47,10 @@ body {
   padding-bottom: env(safe-area-inset-bottom);
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
 }
 
 #app {
@@ -66,34 +84,33 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 40px 24px;
-  background-color: var(--bg-primary);
+  padding: 48px 28px;
+  background-color: var(--bg-dark);
 }
 
 .logo-section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 48px;
+  margin-bottom: 56px;
 }
 
 .logo {
-  width: 100px;
-  height: 100px;
-  border: 2px solid var(--accent-gold);
-  border-radius: 20px;
+  width: 96px;
+  height: 96px;
+  border: 1.5px solid var(--accent-gold);
+  border-radius: var(--radius);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 24px;
-  background-color: var(--bg-primary);
+  margin-bottom: 28px;
+  background-color: var(--bg-dark);
 }
 
 .logo.small {
-  width: 72px;
-  height: 72px;
-  border-radius: 16px;
-  margin-bottom: 20px;
+  width: 68px;
+  height: 68px;
+  margin-bottom: 24px;
 }
 
 .logo-inner {
@@ -103,59 +120,62 @@ body {
 }
 
 .logo-rx {
-  font-size: 32px;
+  font-family: var(--font-heading);
+  font-size: 30px;
   font-weight: 700;
   color: var(--accent-gold);
 }
 
 .logo.small .logo-rx {
-  font-size: 24px;
+  font-size: 22px;
 }
 
 .logo-ai {
-  font-size: 22px;
+  font-family: var(--font-heading);
+  font-size: 20px;
   font-weight: 600;
   color: var(--text-primary);
 }
 
 .logo.small .logo-ai {
-  font-size: 16px;
+  font-size: 15px;
 }
 
 .app-title {
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 600;
   color: var(--text-primary);
   margin-bottom: 8px;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.02em;
 }
 
 .app-subtitle {
-  font-size: 16px;
-  font-weight: 400;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
   color: var(--accent-gold);
-  letter-spacing: 1px;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
 .login-form {
   width: 100%;
-  max-width: 360px;
+  max-width: 340px;
 }
 
 .input-group {
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .input-group input {
   width: 100%;
-  padding: 16px 20px;
+  padding: 14px 18px;
   background-color: var(--bg-input);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
+  border-radius: var(--radius);
   color: var(--text-primary);
-  font-size: 16px;
-  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  font-family: var(--font-body);
   outline: none;
   transition: border-color 0.2s ease;
 }
@@ -170,29 +190,31 @@ body {
 
 .error-message {
   color: var(--error-red);
-  font-size: 14px;
+  font-size: 13px;
   text-align: center;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
   padding: 8px;
 }
 
 .signin-btn {
   width: 100%;
-  max-width: 360px;
-  padding: 16px;
+  max-width: 340px;
+  padding: 14px;
   background-color: var(--accent-gold);
-  color: var(--bg-primary);
+  color: var(--bg-dark);
   border: none;
-  border-radius: 12px;
-  font-size: 16px;
+  border-radius: var(--radius);
+  font-size: 14px;
   font-weight: 600;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-heading);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   cursor: pointer;
   transition: background-color 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 52px;
+  min-height: 48px;
 }
 
 .signin-btn:hover {
@@ -206,17 +228,17 @@ body {
 
 .skip-btn {
   width: 100%;
-  max-width: 360px;
-  padding: 14px;
+  max-width: 340px;
+  padding: 12px;
   background: transparent;
   color: var(--text-secondary);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
-  font-size: 14px;
+  border-radius: var(--radius);
+  font-size: 13px;
   font-weight: 500;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   cursor: pointer;
-  margin-top: 12px;
+  margin-top: 10px;
   transition: border-color 0.2s ease;
 }
 
@@ -233,9 +255,11 @@ body {
 }
 
 .footer p {
-  font-size: 12px;
+  font-size: 11px;
+  font-family: var(--font-body);
   color: var(--text-muted);
-  letter-spacing: 0.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .spinner {
@@ -243,15 +267,15 @@ body {
   width: 20px;
   height: 20px;
   border: 2px solid rgba(26, 31, 46, 0.3);
-  border-top-color: var(--bg-primary);
+  border-top-color: var(--bg-dark);
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
 }
 
 .spinner.large {
-  width: 36px;
-  height: 36px;
-  border: 3px solid rgba(200, 160, 74, 0.2);
+  width: 32px;
+  height: 32px;
+  border: 2px solid rgba(200, 160, 74, 0.15);
   border-top-color: var(--accent-gold);
 }
 
@@ -260,25 +284,27 @@ body {
 }
 
 .loading-container {
-  gap: 24px;
+  gap: 28px;
 }
 
 .loading-text {
   color: var(--text-secondary);
-  font-size: 14px;
+  font-size: 13px;
+  font-family: var(--font-body);
+  letter-spacing: 0.02em;
 }
 
 .healthkit-info {
   width: 100%;
-  max-width: 360px;
-  margin-bottom: 32px;
+  max-width: 340px;
+  margin-bottom: 36px;
 }
 
 .hk-feature {
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 16px 0;
+  padding: 14px 0;
   border-bottom: 1px solid var(--border-color);
 }
 
@@ -287,27 +313,29 @@ body {
 }
 
 .hk-icon {
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   background-color: var(--bg-input);
-  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  font-size: 18px;
   color: var(--accent-gold);
   flex-shrink: 0;
 }
 
 .hk-text h3 {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--text-primary);
   margin-bottom: 2px;
 }
 
 .hk-text p {
-  font-size: 13px;
+  font-size: 12px;
+  font-family: var(--font-body);
   color: var(--text-secondary);
 }
 
