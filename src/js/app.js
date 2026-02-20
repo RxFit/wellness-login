@@ -34,34 +34,34 @@ class RxFitApp {
 
   bindEvents() {
     const loginForm = document.getElementById('login-form');
-    loginForm.addEventListener('submit', (e) => this.handleLogin(e));
+    if (loginForm) loginForm.addEventListener('submit', (e) => this.handleLogin(e));
 
     const connectBtn = document.getElementById('connect-healthkit-btn');
-    connectBtn.addEventListener('click', () => this.handleHealthKitConnect());
+    if (connectBtn) connectBtn.addEventListener('click', () => this.handleHealthKitConnect());
 
     const skipBtn = document.getElementById('skip-healthkit-btn');
-    skipBtn.addEventListener('click', () => this.loadWebApp());
+    if (skipBtn) skipBtn.addEventListener('click', () => this.loadWebApp());
 
     const forgotLink = document.getElementById('forgot-password-link');
-    forgotLink.addEventListener('click', (e) => this.handleForgotPassword(e));
+    if (forgotLink) forgotLink.addEventListener('click', (e) => this.handleForgotPassword(e));
 
     const retryBtn = document.getElementById('retry-btn');
-    retryBtn.addEventListener('click', () => this.handleRetry());
+    if (retryBtn) retryBtn.addEventListener('click', () => this.handleRetry());
 
     const backBtn = document.getElementById('back-to-login-btn');
-    backBtn.addEventListener('click', () => this.handleBackToLogin());
+    if (backBtn) backBtn.addEventListener('click', () => this.handleBackToLogin());
 
     const togglePassword = document.getElementById('toggle-password');
-    togglePassword.addEventListener('click', () => this.togglePasswordVisibility());
+    if (togglePassword) togglePassword.addEventListener('click', () => this.togglePasswordVisibility());
 
     const biometricBtn = document.getElementById('biometric-btn');
-    biometricBtn.addEventListener('click', () => this.handleBiometricLogin());
+    if (biometricBtn) biometricBtn.addEventListener('click', () => this.handleBiometricLogin());
 
     const openHealthSettingsBtn = document.getElementById('open-health-settings-btn');
-    openHealthSettingsBtn.addEventListener('click', () => this.openHealthSettings());
+    if (openHealthSettingsBtn) openHealthSettingsBtn.addEventListener('click', () => this.openHealthSettings());
 
     const skipDeniedBtn = document.getElementById('skip-denied-btn');
-    skipDeniedBtn.addEventListener('click', () => this.loadWebApp());
+    if (skipDeniedBtn) skipDeniedBtn.addEventListener('click', () => this.loadWebApp());
 
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible' && this.auth.isAuthenticated()) {
@@ -176,23 +176,27 @@ class RxFitApp {
 
     if (!this.isOnline) {
       const errorEl = document.getElementById('error-message');
-      errorEl.textContent = 'No internet connection. Please check your network and try again.';
-      errorEl.style.display = 'block';
+      if (errorEl) {
+        errorEl.textContent = 'No internet connection. Please check your network and try again.';
+        errorEl.style.display = 'block';
+      }
       await this.triggerHaptic('error');
       return;
     }
 
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
+    const emailEl = document.getElementById('email');
+    const passwordEl = document.getElementById('password');
+    const email = emailEl ? emailEl.value.trim() : '';
+    const password = passwordEl ? passwordEl.value : '';
     const errorEl = document.getElementById('error-message');
     const btn = document.getElementById('signin-btn');
-    const btnText = btn.querySelector('.btn-text');
-    const btnLoader = btn.querySelector('.btn-loader');
+    const btnText = btn ? btn.querySelector('.btn-text') : null;
+    const btnLoader = btn ? btn.querySelector('.btn-loader') : null;
 
-    errorEl.style.display = 'none';
-    btn.disabled = true;
-    btnText.style.display = 'none';
-    btnLoader.style.display = 'inline-block';
+    if (errorEl) errorEl.style.display = 'none';
+    if (btn) btn.disabled = true;
+    if (btnText) btnText.style.display = 'none';
+    if (btnLoader) btnLoader.style.display = 'inline-block';
 
     try {
       const result = await this.auth.login(email, password);
@@ -203,44 +207,52 @@ class RxFitApp {
           await this.auth.saveBiometricCredentials(email, password);
         }
 
-        if (this.isNative && !this.healthkit.hasBeenPrompted()) {
+        if (this.isNative && !(await this.healthkit.hasBeenPrompted())) {
           this.screens.show('healthkit');
         } else {
           this.loadWebApp();
         }
       } else {
         await this.triggerHaptic('error');
-        errorEl.textContent = result.error || 'Invalid email or password';
-        errorEl.style.display = 'block';
+        if (errorEl) {
+          errorEl.textContent = result.error || 'Invalid email or password';
+          errorEl.style.display = 'block';
+        }
       }
     } catch (err) {
       await this.triggerHaptic('error');
-      errorEl.textContent = 'Connection error. Please try again.';
-      errorEl.style.display = 'block';
+      if (errorEl) {
+        errorEl.textContent = 'Connection error. Please try again.';
+        errorEl.style.display = 'block';
+      }
     } finally {
-      btn.disabled = false;
-      btnText.style.display = 'inline';
-      btnLoader.style.display = 'none';
+      if (btn) {
+        btn.disabled = false;
+        if (btnText) btnText.style.display = 'inline';
+        if (btnLoader) btnLoader.style.display = 'none';
+      }
     }
   }
 
   async handleBiometricLogin() {
     if (!this.isOnline) {
       const errorEl = document.getElementById('error-message');
-      errorEl.textContent = 'No internet connection. Please check your network and try again.';
-      errorEl.style.display = 'block';
+      if (errorEl) {
+        errorEl.textContent = 'No internet connection. Please check your network and try again.';
+        errorEl.style.display = 'block';
+      }
       return;
     }
 
     const biometricBtn = document.getElementById('biometric-btn');
-    biometricBtn.disabled = true;
+    if (biometricBtn) biometricBtn.disabled = true;
 
     try {
       const result = await this.auth.biometricLogin();
       if (result.success) {
         await this.triggerHaptic('success');
 
-        if (this.isNative && !this.healthkit.hasBeenPrompted()) {
+        if (this.isNative && !(await this.healthkit.hasBeenPrompted())) {
           this.screens.show('healthkit');
         } else {
           this.loadWebApp();
@@ -248,13 +260,15 @@ class RxFitApp {
       } else if (result.error !== 'cancelled') {
         await this.triggerHaptic('error');
         const errorEl = document.getElementById('error-message');
-        errorEl.textContent = result.error;
-        errorEl.style.display = 'block';
+        if (errorEl) {
+          errorEl.textContent = result.error;
+          errorEl.style.display = 'block';
+        }
       }
     } catch (err) {
       console.error('Biometric login error:', err);
     } finally {
-      biometricBtn.disabled = false;
+      if (biometricBtn) biometricBtn.disabled = false;
     }
   }
 
@@ -292,7 +306,7 @@ class RxFitApp {
 
     try {
       const granted = await this.healthkit.requestPermissions();
-      this.healthkit.markAsPrompted();
+      await this.healthkit.markAsPrompted();
 
       if (granted) {
         await this.healthkit.performInitialSync();
@@ -369,9 +383,9 @@ class RxFitApp {
     const text = document.getElementById('loading-text');
     const errorEl = document.getElementById('loading-error');
 
-    spinner.style.display = 'flex';
-    text.style.display = 'block';
-    errorEl.classList.remove('visible');
+    if (spinner) spinner.style.display = 'flex';
+    if (text) text.style.display = 'block';
+    if (errorEl) errorEl.classList.remove('visible');
   }
 
   showLoadingError() {
@@ -381,9 +395,9 @@ class RxFitApp {
     const text = document.getElementById('loading-text');
     const errorEl = document.getElementById('loading-error');
 
-    spinner.style.display = 'none';
-    text.style.display = 'none';
-    errorEl.classList.add('visible');
+    if (spinner) spinner.style.display = 'none';
+    if (text) text.style.display = 'none';
+    if (errorEl) errorEl.classList.add('visible');
   }
 
   clearLoadTimer() {

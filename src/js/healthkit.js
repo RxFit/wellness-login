@@ -17,12 +17,28 @@ export class HealthKitService {
     return null;
   }
 
-  hasBeenPrompted() {
-    return localStorage.getItem(this.promptedKey) === 'true';
+  async hasBeenPrompted() {
+    try {
+      if (typeof window.Capacitor !== 'undefined' && window.Capacitor.Plugins?.Preferences) {
+        const result = await window.Capacitor.Plugins.Preferences.get({ key: this.promptedKey });
+        return result.value === 'true';
+      }
+      return localStorage.getItem(this.promptedKey) === 'true';
+    } catch (e) {
+      return localStorage.getItem(this.promptedKey) === 'true';
+    }
   }
 
-  markAsPrompted() {
-    localStorage.setItem(this.promptedKey, 'true');
+  async markAsPrompted() {
+    try {
+      if (typeof window.Capacitor !== 'undefined' && window.Capacitor.Plugins?.Preferences) {
+        await window.Capacitor.Plugins.Preferences.set({ key: this.promptedKey, value: 'true' });
+      } else {
+        localStorage.setItem(this.promptedKey, 'true');
+      }
+    } catch (e) {
+      localStorage.setItem(this.promptedKey, 'true');
+    }
   }
 
   async requestPermissions() {
@@ -58,7 +74,7 @@ export class HealthKitService {
         await this.sendSamples(result.samples, result.deviceInfo);
       }
 
-      this.updateLastSyncDate();
+      await this.updateLastSyncDate();
     } catch (err) {
       console.error('Initial sync error:', err);
     }
@@ -68,7 +84,7 @@ export class HealthKitService {
     const plugin = this.getPlugin();
     if (!plugin) return;
 
-    const lastSync = this.getLastSyncDate();
+    const lastSync = await this.getLastSyncDate();
     if (!lastSync) {
       await this.performInitialSync();
       return;
@@ -84,7 +100,7 @@ export class HealthKitService {
         await this.sendSamples(result.samples, result.deviceInfo);
       }
 
-      this.updateLastSyncDate();
+      await this.updateLastSyncDate();
     } catch (err) {
       console.error('Sync error:', err);
     }
@@ -157,11 +173,27 @@ export class HealthKitService {
     }
   }
 
-  getLastSyncDate() {
-    return localStorage.getItem(this.lastSyncKey);
+  async getLastSyncDate() {
+    try {
+      if (typeof window.Capacitor !== 'undefined' && window.Capacitor.Plugins?.Preferences) {
+        const result = await window.Capacitor.Plugins.Preferences.get({ key: this.lastSyncKey });
+        return result.value || null;
+      }
+      return localStorage.getItem(this.lastSyncKey);
+    } catch (e) {
+      return localStorage.getItem(this.lastSyncKey);
+    }
   }
 
-  updateLastSyncDate() {
-    localStorage.setItem(this.lastSyncKey, new Date().toISOString());
+  async updateLastSyncDate() {
+    try {
+      if (typeof window.Capacitor !== 'undefined' && window.Capacitor.Plugins?.Preferences) {
+        await window.Capacitor.Plugins.Preferences.set({ key: this.lastSyncKey, value: new Date().toISOString() });
+      } else {
+        localStorage.setItem(this.lastSyncKey, new Date().toISOString());
+      }
+    } catch (e) {
+      localStorage.setItem(this.lastSyncKey, new Date().toISOString());
+    }
   }
 }

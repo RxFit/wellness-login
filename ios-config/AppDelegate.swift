@@ -35,11 +35,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         guard isOnRemoteSite else { return }
 
         let statusURL = "https://app.rxfit.ai/api/healthkit/status"
-        var request = URLRequest(url: URL(string: statusURL)!)
+        guard let url = URL(string: statusURL) else { return }
+        var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.timeoutInterval = 10
 
-        if let cookies = HTTPCookieStorage.shared.cookies(for: URL(string: "https://app.rxfit.ai")!) {
+        if let cookieURL = URL(string: "https://app.rxfit.ai"),
+           let cookies = HTTPCookieStorage.shared.cookies(for: cookieURL) {
             let headers = HTTPCookie.requestHeaderFields(with: cookies)
             for (key, value) in headers {
                 request.setValue(value, forHTTPHeaderField: key)

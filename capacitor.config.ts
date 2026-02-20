@@ -7,7 +7,7 @@ const config: CapacitorConfig = {
   ios: {
     contentInset: 'automatic',
     backgroundColor: '#0C1217',
-    scheme: 'RxFit Wellness',
+    scheme: 'rxfitwellness',
     preferredContentMode: 'mobile',
     allowsLinkPreview: false,
     limitsNavigationsToAppBoundDomains: true,
