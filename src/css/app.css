@@ -158,6 +158,13 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 40px;
 }
 
+.login-logo-badge {
+  width: 220px;
+  height: auto;
+  margin-bottom: 8px;
+  object-fit: contain;
+}
+
 .logo {
   width: 96px;
   height: 96px;
