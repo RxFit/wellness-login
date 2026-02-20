@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#1a1f2e">
+  <meta name="theme-color" content="#0C1217">
   <title>RxFit Wellness</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,7 +34,7 @@
             <input type="password" id="password" placeholder="Password" autocomplete="current-password" required>
           </div>
           <div id="error-message" class="error-message" style="display: none;"></div>
-          <button type="submit" id="signin-btn" class="signin-btn">
+          <button type="submit" id="signin-btn" class="primary-btn">
             <span class="btn-text">Sign In</span>
             <span class="btn-loader" style="display: none;">
               <span class="spinner"></span>
@@ -56,36 +56,31 @@
               <span class="logo-rx">Rx</span><span class="logo-ai">AI</span>
             </div>
           </div>
-          <h1 class="app-title">Connect Health Data</h1>
-          <p class="app-subtitle">Personalize your coaching experience</p>
+          <h1 class="app-title medium">Connect Apple Health</h1>
+          <p class="app-description">Sync your health data for personalized coaching insights</p>
         </div>
 
         <div class="healthkit-info">
           <div class="hk-feature">
-            <div class="hk-icon">&#9829;</div>
-            <div class="hk-text">
-              <h3>Heart Rate Tracking</h3>
-              <p>Monitor your training zones and recovery</p>
-            </div>
+            <div class="hk-icon">&#10003;</div>
+            <div class="hk-text">Heart rate & HRV tracking</div>
           </div>
           <div class="hk-feature">
-            <div class="hk-icon">&#9790;</div>
-            <div class="hk-text">
-              <h3>Sleep Analysis</h3>
-              <p>Track sleep quality and recovery metrics</p>
-            </div>
+            <div class="hk-icon">&#10003;</div>
+            <div class="hk-text">Sleep quality analysis</div>
           </div>
           <div class="hk-feature">
-            <div class="hk-icon">&#9889;</div>
-            <div class="hk-text">
-              <h3>Activity & Workouts</h3>
-              <p>Log steps, calories, and workout sessions</p>
-            </div>
+            <div class="hk-icon">&#10003;</div>
+            <div class="hk-text">VO2 Max & respiratory monitoring</div>
+          </div>
+          <div class="hk-feature">
+            <div class="hk-icon">&#10003;</div>
+            <div class="hk-text">Automatic workout detection</div>
           </div>
         </div>
 
-        <button id="connect-healthkit-btn" class="signin-btn">Connect Apple Health</button>
-        <button id="skip-healthkit-btn" class="skip-btn">Skip for Now</button>
+        <button id="connect-healthkit-btn" class="primary-btn">Enable Health Sync</button>
+        <button id="skip-healthkit-btn" class="ghost-btn">Set Up Later</button>
 
         <div class="footer">
           <p>Your data is encrypted and securely transmitted</p>

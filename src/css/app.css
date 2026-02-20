@@ -1,15 +1,24 @@
 :root {
-  --bg-dark: #1a1f2e;
-  --bg-light: #f5f6f8;
-  --bg-secondary: #242938;
-  --bg-input: #2a3040;
-  --accent-gold: #c8a04a;
-  --accent-gold-hover: #d4b05e;
-  --text-primary: #ffffff;
-  --text-secondary: #a0a8b8;
-  --text-muted: #6b7280;
+  --bg-dark: #0C1217;
+  --bg-card: #11171D;
+  --bg-secondary: #1D242A;
+  --bg-accent: #212930;
+  --bg-muted: #1C2228;
+  --bg-input: #2E3842;
+  --bg-popover: #121A21;
+
+  --accent-gold: #E8B430;
+  --accent-gold-fg: #0A0F15;
+
+  --text-foreground: #D3DBDE;
+  --text-muted: #73848C;
+  --text-secondary: #BFC9CE;
+
+  --border-color: #1F262E;
+  --border-card: #1D242B;
+
+  --destructive: #F2800D;
   --error-red: #D94040;
-  --border-color: rgba(255, 255, 255, 0.08);
 
   --engagement-green: #3B9A5C;
   --engagement-yellow: #E6A935;
@@ -20,9 +29,15 @@
   --hr-cardio: #F97316;
   --hr-peak: #EF4444;
 
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-heading: 'JetBrains Mono', monospace;
-  --radius: 0.25rem;
+  --chart-1: #E8B430;
+  --chart-2: #2EB8B8;
+  --chart-3: #39AC39;
+  --chart-4: #F48C25;
+  --chart-5: #7953C6;
+
+  --font-body: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  --font-heading: 'JetBrains Mono', 'Fira Code', 'SF Mono', Menlo, monospace;
+  --radius: 4px;
 }
 
 * {
@@ -36,8 +51,10 @@ html, body {
   height: 100%;
   overflow: hidden;
   font-family: var(--font-body);
+  font-size: 16px;
+  letter-spacing: 0.02em;
   background-color: var(--bg-dark);
-  color: var(--text-primary);
+  color: var(--text-foreground);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -51,6 +68,7 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
+  letter-spacing: 0.05em;
 }
 
 #app {
@@ -84,7 +102,7 @@ h1, h2, h3, h4, h5, h6 {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 48px 28px;
+  padding: 40px 24px;
   background-color: var(--bg-dark);
 }
 
@@ -92,7 +110,7 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 56px;
+  margin-bottom: 40px;
 }
 
 .logo {
@@ -103,14 +121,14 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
   background-color: var(--bg-dark);
 }
 
 .logo.small {
   width: 68px;
   height: 68px;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .logo-inner {
@@ -134,7 +152,7 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   font-size: 20px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-foreground);
 }
 
 .logo.small .logo-ai {
@@ -142,20 +160,31 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .app-title {
-  font-size: 26px;
-  font-weight: 600;
-  color: var(--text-primary);
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--text-foreground);
   margin-bottom: 8px;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.05em;
+}
+
+.app-title.medium {
+  font-size: 24px;
 }
 
 .app-subtitle {
   font-family: var(--font-body);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
-  color: var(--accent-gold);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.app-description {
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--text-muted);
+  text-align: center;
+  max-width: 280px;
+  line-height: 1.5;
 }
 
 .login-form {
@@ -164,20 +193,21 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .input-group {
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .input-group input {
   width: 100%;
-  padding: 14px 18px;
+  height: 36px;
+  padding: 8px 12px;
   background-color: var(--bg-input);
   border: 1px solid var(--border-color);
   border-radius: var(--radius);
-  color: var(--text-primary);
-  font-size: 15px;
+  color: var(--text-foreground);
+  font-size: 16px;
   font-family: var(--font-body);
   outline: none;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .input-group input::placeholder {
@@ -186,64 +216,64 @@ h1, h2, h3, h4, h5, h6 {
 
 .input-group input:focus {
   border-color: var(--accent-gold);
+  box-shadow: 0 0 0 2px rgba(232, 180, 48, 0.25);
 }
 
 .error-message {
   color: var(--error-red);
   font-size: 13px;
   text-align: center;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
   padding: 8px;
 }
 
-.signin-btn {
+.primary-btn {
   width: 100%;
   max-width: 340px;
-  padding: 14px;
+  padding: 0 16px;
+  height: 40px;
   background-color: var(--accent-gold);
-  color: var(--bg-dark);
+  color: var(--accent-gold-fg);
   border: none;
   border-radius: var(--radius);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
-  font-family: var(--font-heading);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-family: var(--font-body);
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: opacity 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 48px;
 }
 
-.signin-btn:hover {
-  background-color: var(--accent-gold-hover);
+.primary-btn:hover {
+  opacity: 0.9;
 }
 
-.signin-btn:disabled {
-  opacity: 0.6;
+.primary-btn:disabled {
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
-.skip-btn {
+.ghost-btn {
   width: 100%;
   max-width: 340px;
-  padding: 12px;
+  padding: 0 16px;
+  height: 36px;
   background: transparent;
-  color: var(--text-secondary);
-  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  border: none;
   border-radius: var(--radius);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   font-family: var(--font-body);
   cursor: pointer;
-  margin-top: 10px;
-  transition: border-color 0.2s ease;
+  margin-top: 12px;
+  transition: color 0.2s ease;
 }
 
-.skip-btn:hover {
-  border-color: var(--text-secondary);
+.ghost-btn:hover {
+  color: var(--text-foreground);
 }
 
 .footer {
@@ -255,19 +285,24 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .footer p {
-  font-size: 11px;
+  font-size: 12px;
   font-family: var(--font-body);
   color: var(--text-muted);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+}
+
+.footer a {
+  color: var(--accent-gold);
+  text-decoration: none;
+  font-size: 14px;
+  font-family: var(--font-body);
 }
 
 .spinner {
   display: inline-block;
   width: 20px;
   height: 20px;
-  border: 2px solid rgba(26, 31, 46, 0.3);
-  border-top-color: var(--bg-dark);
+  border: 2px solid rgba(10, 15, 21, 0.3);
+  border-top-color: var(--accent-gold-fg);
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
 }
@@ -275,7 +310,7 @@ h1, h2, h3, h4, h5, h6 {
 .spinner.large {
   width: 32px;
   height: 32px;
-  border: 2px solid rgba(200, 160, 74, 0.15);
+  border: 2px solid rgba(232, 180, 48, 0.15);
   border-top-color: var(--accent-gold);
 }
 
@@ -284,59 +319,66 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .loading-container {
-  gap: 28px;
+  gap: 24px;
 }
 
 .loading-text {
-  color: var(--text-secondary);
-  font-size: 13px;
+  color: var(--text-muted);
+  font-size: 14px;
   font-family: var(--font-body);
-  letter-spacing: 0.02em;
 }
 
 .healthkit-info {
   width: 100%;
   max-width: 340px;
-  margin-bottom: 36px;
+  margin-bottom: 32px;
 }
 
 .hk-feature {
   display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 14px 0;
-  border-bottom: 1px solid var(--border-color);
+  align-items: flex-start;
+  gap: 12px;
+  padding: 6px 0;
 }
 
-.hk-feature:last-child {
-  border-bottom: none;
+.hk-feature + .hk-feature {
+  margin-top: 12px;
 }
 
 .hk-icon {
-  width: 40px;
-  height: 40px;
-  background-color: var(--bg-input);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius);
+  width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 16px;
   color: var(--accent-gold);
   flex-shrink: 0;
+  margin-top: 1px;
 }
 
-.hk-text h3 {
+.hk-text {
   font-size: 14px;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 2px;
+  font-family: var(--font-body);
+  color: var(--text-foreground);
+  line-height: 1.4;
 }
 
-.hk-text p {
-  font-size: 12px;
-  font-family: var(--font-body);
-  color: var(--text-secondary);
+.section-label {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+}
+
+.hud-label {
+  font-family: var(--font-heading);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.20em;
+  color: var(--text-muted);
 }
 
 #webview-frame {

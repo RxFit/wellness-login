@@ -6,7 +6,7 @@ const config: CapacitorConfig = {
   webDir: 'dist',
   ios: {
     contentInset: 'automatic',
-    backgroundColor: '#1a1f2e',
+    backgroundColor: '#0C1217',
     scheme: 'RxFit Wellness',
     preferredContentMode: 'mobile',
   },
