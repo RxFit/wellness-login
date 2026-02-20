@@ -101,6 +101,8 @@ rxfit-wellness/
 - 2026-02-20: Added remember me (email pre-fill from last login)
 - 2026-02-20: Added Face ID / Touch ID biometric login (@capgo/capacitor-native-biometric)
 - 2026-02-20: Added NSFaceIDUsageDescription to Info.plist
+- 2026-02-20: Added login helper text ("Sign in with the account you created on app.rxfit.ai")
+- 2026-02-20: Added HealthKit denial recovery screen with numbered steps and Settings deep-link
 
 ## User Preferences
 - Design aesthetic: "Clinical Luxury" — clean, minimal, high-end medical/wellness feel
