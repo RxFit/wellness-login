@@ -103,6 +103,10 @@ rxfit-wellness/
 - 2026-02-20: Added NSFaceIDUsageDescription to Info.plist
 - 2026-02-20: Added login helper text ("Sign in with the account you created on app.rxfit.ai")
 - 2026-02-20: Added HealthKit denial recovery screen with numbered steps and Settings deep-link
+- 2026-02-20: Fixed footer overlap — changed from absolute positioning to normal document flow
+- 2026-02-20: Optimized favicon from 2.2MB to ~6KB (64x64px), kept full-size for apple-touch-icon
+- 2026-02-20: Updated all screens (splash, loading, HealthKit, denied) to use RK badge logo consistently
+- 2026-02-20: Reviewed privacy policy — confirmed App Store compliant, no changes needed
 - 2026-02-20: **Pre-App Store audit completed — 7 issues fixed:**
   - CRITICAL: Removed dev test login bypass (test@rxfit.ai/test123) from auth.js
   - CRITICAL: Migrated healthkit.js state (prompted, lastSync) from localStorage to Capacitor Preferences
