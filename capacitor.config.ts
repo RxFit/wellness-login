@@ -10,12 +10,16 @@ const config: CapacitorConfig = {
     scheme: 'RxFit Wellness',
     preferredContentMode: 'mobile',
     allowsLinkPreview: false,
+    limitsNavigationsToAppBoundDomains: true,
   },
   server: {
     allowNavigation: ['app.rxfit.ai', '*.rxfit.ai'],
   },
   plugins: {
     CapacitorHttp: {
+      enabled: true,
+    },
+    CapacitorCookies: {
       enabled: true,
     },
     Preferences: {

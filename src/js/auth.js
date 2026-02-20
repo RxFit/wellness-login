@@ -1,5 +1,3 @@
-import { nativeFetch } from './http.js';
-
 export class AuthService {
   constructor(apiBase) {
     this.apiBase = apiBase;
@@ -9,15 +7,16 @@ export class AuthService {
 
   async login(email, password) {
     try {
-      const response = await nativeFetch(`${this.apiBase}/api/auth/client-login`, {
+      const response = await fetch(`${this.apiBase}/api/auth/client-login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
+        credentials: 'include',
       });
 
       if (response.ok) {
         this.authenticated = true;
-        this.saveSession();
+        await this.saveSession();
         return { success: true };
       }
 
@@ -33,11 +32,13 @@ export class AuthService {
   }
 
   async checkSession() {
-    const hasLocal = this.getSessionFlag();
+    const hasLocal = await this.getSessionFlag();
     if (!hasLocal) return false;
 
     try {
-      const response = await nativeFetch(`${this.apiBase}/api/healthkit/status`);
+      const response = await fetch(`${this.apiBase}/api/healthkit/status`, {
+        credentials: 'include',
+      });
       if (response.ok) {
         this.authenticated = true;
         return true;
@@ -46,7 +47,7 @@ export class AuthService {
       console.warn('Session check failed:', e);
     }
 
-    this.clearSession();
+    await this.clearSession();
     return false;
   }
 
@@ -54,10 +55,10 @@ export class AuthService {
     return this.authenticated;
   }
 
-  saveSession() {
+  async saveSession() {
     try {
       if (typeof window.Capacitor !== 'undefined' && window.Capacitor.Plugins?.Preferences) {
-        window.Capacitor.Plugins.Preferences.set({ key: this.sessionKey, value: 'true' });
+        await window.Capacitor.Plugins.Preferences.set({ key: this.sessionKey, value: 'true' });
       } else {
         localStorage.setItem(this.sessionKey, 'true');
       }
@@ -66,10 +67,11 @@ export class AuthService {
     }
   }
 
-  getSessionFlag() {
+  async getSessionFlag() {
     try {
       if (typeof window.Capacitor !== 'undefined' && window.Capacitor.Plugins?.Preferences) {
-        return true;
+        const result = await window.Capacitor.Plugins.Preferences.get({ key: this.sessionKey });
+        return result.value === 'true';
       }
       return localStorage.getItem(this.sessionKey) === 'true';
     } catch (e) {
@@ -77,14 +79,20 @@ export class AuthService {
     }
   }
 
-  clearSession() {
+  async clearSession() {
     this.authenticated = false;
     try {
-      localStorage.removeItem(this.sessionKey);
-    } catch (e) {}
+      if (typeof window.Capacitor !== 'undefined' && window.Capacitor.Plugins?.Preferences) {
+        await window.Capacitor.Plugins.Preferences.remove({ key: this.sessionKey });
+      } else {
+        localStorage.removeItem(this.sessionKey);
+      }
+    } catch (e) {
+      try { localStorage.removeItem(this.sessionKey); } catch (ex) {}
+    }
   }
 
-  logout() {
-    this.clearSession();
+  async logout() {
+    await this.clearSession();
   }
 }

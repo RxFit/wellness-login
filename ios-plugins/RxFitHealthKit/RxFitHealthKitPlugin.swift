@@ -75,11 +75,8 @@ public class RxFitHealthKitPlugin: CAPPlugin, CAPBridgedPlugin {
             return
         }
 
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-
-        guard let startDate = formatter.date(from: startDateStr),
-              let endDate = formatter.date(from: endDateStr) else {
+        guard let startDate = parseISO8601(startDateStr),
+              let endDate = parseISO8601(endDateStr) else {
             call.reject("Invalid date format")
             return
         }
@@ -130,6 +127,18 @@ public class RxFitHealthKitPlugin: CAPPlugin, CAPBridgedPlugin {
         group.notify(queue: .main) {
             call.resolve(["enabled": enabledCount > 0, "count": enabledCount])
         }
+    }
+
+    private func parseISO8601(_ string: String) -> Date? {
+        let formatterWithFraction = ISO8601DateFormatter()
+        formatterWithFraction.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        if let date = formatterWithFraction.date(from: string) {
+            return date
+        }
+
+        let formatterWithout = ISO8601DateFormatter()
+        formatterWithout.formatOptions = [.withInternetDateTime]
+        return formatterWithout.date(from: string)
     }
 
     private func setupObserverQuery(for sampleType: HKSampleType) {
