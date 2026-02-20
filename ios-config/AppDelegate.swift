@@ -1,6 +1,7 @@
 import UIKit
 import Capacitor
 import HealthKit
+import WebKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -16,6 +17,54 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             UIApplication.backgroundFetchIntervalMinimum
         )
         return true
+    }
+
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        checkSessionValidity()
+    }
+
+    private func checkSessionValidity() {
+        guard let rootVC = window?.rootViewController as? CAPBridgeViewController,
+              let webView = rootVC.webView else {
+            return
+        }
+
+        let currentURL = webView.url?.absoluteString ?? ""
+        let isOnRemoteSite = currentURL.contains("app.rxfit.ai")
+
+        guard isOnRemoteSite else { return }
+
+        let statusURL = "https://app.rxfit.ai/api/healthkit/status"
+        var request = URLRequest(url: URL(string: statusURL)!)
+        request.httpMethod = "GET"
+        request.timeoutInterval = 10
+
+        if let cookies = HTTPCookieStorage.shared.cookies(for: URL(string: "https://app.rxfit.ai")!) {
+            let headers = HTTPCookie.requestHeaderFields(with: cookies)
+            for (key, value) in headers {
+                request.setValue(value, forHTTPHeaderField: key)
+            }
+        }
+
+        URLSession.shared.dataTask(with: request) { [weak self] _, response, error in
+            guard error == nil,
+                  let httpResponse = response as? HTTPURLResponse else {
+                return
+            }
+
+            if httpResponse.statusCode == 401 || httpResponse.statusCode == 403 {
+                DispatchQueue.main.async {
+                    self?.navigateToLocalLogin(webView: webView)
+                }
+            }
+        }.resume()
+    }
+
+    private func navigateToLocalLogin(webView: WKWebView) {
+        let localURL = Bundle.main.url(forResource: "index", withExtension: "html", subdirectory: "public")
+        if let url = localURL {
+            webView.load(URLRequest(url: url))
+        }
     }
 
     func application(

@@ -29,7 +29,7 @@
 
         <form id="login-form" class="login-form">
           <div class="input-group">
-            <input type="email" id="email" placeholder="Email" autocomplete="email" required>
+            <input type="email" id="email" placeholder="Email" autocomplete="email" inputmode="email" required>
           </div>
           <div class="input-group">
             <input type="password" id="password" placeholder="Password" autocomplete="current-password" required>
@@ -41,6 +41,7 @@
               <span class="spinner"></span>
             </span>
           </button>
+          <a id="forgot-password-link" href="#" class="forgot-password-link">Forgot password?</a>
         </form>
 
         <div class="footer">
@@ -98,10 +99,15 @@
             <div class="logo-bottom"><span class="logo-ai">AI</span></div>
           </div>
         </div>
-        <div class="loading-spinner">
+        <div id="loading-spinner" class="loading-spinner">
           <span class="spinner large"></span>
         </div>
-        <p class="loading-text">Loading your dashboard...</p>
+        <p id="loading-text" class="loading-text">Loading your dashboard...</p>
+        <div id="loading-error" class="loading-error">
+          <p class="loading-error-text">We're having trouble connecting. Check your internet connection and try again.</p>
+          <button id="retry-btn" class="outline-btn">Try Again</button>
+          <button id="back-to-login-btn" class="link-btn">Back to sign in</button>
+        </div>
       </div>
     </div>
 

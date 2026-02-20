@@ -78,6 +78,12 @@ rxfit-wellness/
 - 2026-02-20: Configured iOS Info.plist, entitlements, AppDelegate, launch screen
 - 2026-02-20: Updated design to match exact Clinical Luxury style guide from web app
 - 2026-02-20: Added UIColor+RxFit.swift extension with complete brand color palette
+- 2026-02-20: Fixed cookie/session sync, ISO8601 parsing, removed health-records entitlement
+- 2026-02-20: Added keyboard scroll handling for small iPhone screens
+- 2026-02-20: Added "Forgot password?" link (opens in system browser via @capacitor/browser)
+- 2026-02-20: Added loading failure recovery with retry button and back-to-login option
+- 2026-02-20: Added session expiry detection (polls /api/healthkit/status every 30s, bounces to login on 401)
+- 2026-02-20: Increased all input/button touch targets to 48px (Apple HIG minimum 44px)
 
 ## User Preferences
 - Design aesthetic: "Clinical Luxury" — clean, minimal, high-end medical/wellness feel

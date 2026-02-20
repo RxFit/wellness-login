@@ -3,6 +3,7 @@ import { HealthKitService } from './healthkit.js';
 import { ScreenManager } from './screens.js';
 
 const API_BASE = 'https://app.rxfit.ai';
+const LOAD_TIMEOUT_MS = 15000;
 
 class RxFitApp {
   constructor() {
@@ -10,10 +11,12 @@ class RxFitApp {
     this.healthkit = new HealthKitService(API_BASE);
     this.screens = new ScreenManager();
     this.isNative = typeof window.Capacitor !== 'undefined' && window.Capacitor.isNativePlatform();
+    this.loadTimer = null;
   }
 
   async init() {
     this.bindEvents();
+    this.setupKeyboardHandling();
     await this.checkExistingSession();
   }
 
@@ -26,6 +29,15 @@ class RxFitApp {
 
     const skipBtn = document.getElementById('skip-healthkit-btn');
     skipBtn.addEventListener('click', () => this.loadWebApp());
+
+    const forgotLink = document.getElementById('forgot-password-link');
+    forgotLink.addEventListener('click', (e) => this.handleForgotPassword(e));
+
+    const retryBtn = document.getElementById('retry-btn');
+    retryBtn.addEventListener('click', () => this.handleRetry());
+
+    const backBtn = document.getElementById('back-to-login-btn');
+    backBtn.addEventListener('click', () => this.handleBackToLogin());
 
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible' && this.auth.isAuthenticated()) {
@@ -42,6 +54,19 @@ class RxFitApp {
           }
         }
       );
+    }
+  }
+
+  setupKeyboardHandling() {
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', () => {
+        const focused = document.activeElement;
+        if (focused && (focused.tagName === 'INPUT' || focused.tagName === 'TEXTAREA')) {
+          setTimeout(() => {
+            focused.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 100);
+        }
+      });
     }
   }
 
@@ -90,6 +115,17 @@ class RxFitApp {
     }
   }
 
+  handleForgotPassword(e) {
+    e.preventDefault();
+    const resetUrl = `${API_BASE}/forgot-password`;
+
+    if (this.isNative && window.Capacitor?.Plugins?.Browser) {
+      window.Capacitor.Plugins.Browser.open({ url: resetUrl });
+    } else {
+      window.open(resetUrl, '_blank');
+    }
+  }
+
   async handleHealthKitConnect() {
     const btn = document.getElementById('connect-healthkit-btn');
     btn.disabled = true;
@@ -112,11 +148,10 @@ class RxFitApp {
 
   loadWebApp() {
     this.screens.show('loading');
+    this.resetLoadingUI();
 
     if (this.isNative) {
-      setTimeout(() => {
-        window.location.href = API_BASE;
-      }, 1500);
+      this.verifyServerThenNavigate();
     } else {
       const frame = document.getElementById('webview-frame');
       frame.src = API_BASE;
@@ -127,6 +162,80 @@ class RxFitApp {
         this.screens.show('webview');
       }, 5000);
     }
+  }
+
+  async verifyServerThenNavigate() {
+    const controller = new AbortController();
+    this.loadTimer = setTimeout(() => {
+      controller.abort();
+      this.showLoadingError();
+    }, LOAD_TIMEOUT_MS);
+
+    try {
+      const response = await fetch(API_BASE, {
+        method: 'GET',
+        credentials: 'include',
+        signal: controller.signal,
+        redirect: 'follow',
+      });
+      this.clearLoadTimer();
+
+      if (response.ok || response.status < 500) {
+        window.location.href = API_BASE;
+      } else {
+        this.showLoadingError();
+      }
+    } catch (err) {
+      if (err.name !== 'AbortError') {
+        this.clearLoadTimer();
+        this.showLoadingError();
+      }
+    }
+  }
+
+  resetLoadingUI() {
+    const spinner = document.getElementById('loading-spinner');
+    const text = document.getElementById('loading-text');
+    const errorEl = document.getElementById('loading-error');
+
+    spinner.style.display = 'flex';
+    text.style.display = 'block';
+    errorEl.classList.remove('visible');
+  }
+
+  showLoadingError() {
+    this.clearLoadTimer();
+
+    const spinner = document.getElementById('loading-spinner');
+    const text = document.getElementById('loading-text');
+    const errorEl = document.getElementById('loading-error');
+
+    spinner.style.display = 'none';
+    text.style.display = 'none';
+    errorEl.classList.add('visible');
+  }
+
+  clearLoadTimer() {
+    if (this.loadTimer) {
+      clearTimeout(this.loadTimer);
+      this.loadTimer = null;
+    }
+  }
+
+  handleRetry() {
+    this.loadWebApp();
+  }
+
+  async handleBackToLogin() {
+    this.clearLoadTimer();
+    await this.auth.logout();
+
+    const frame = document.getElementById('webview-frame');
+    if (frame) {
+      frame.src = '';
+    }
+
+    this.screens.show('login');
   }
 }
 
