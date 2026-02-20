@@ -166,6 +166,16 @@ h1, h2, h3, h4, h5, h6 {
   object-fit: contain;
 }
 
+.login-subtitle {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  text-align: center;
+  margin: 0 0 24px 0;
+}
+
 .logo {
   width: 96px;
   height: 96px;
