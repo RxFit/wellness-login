@@ -1,0 +1,23 @@
+{
+  "name": "rxfit-wellness",
+  "version": "1.0.0",
+  "description": "RxFit Wellness - iOS Capacitor wrapper app for Industrial Athletes",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --port 5000",
+    "build": "vite build",
+    "cap:sync": "npx cap sync ios",
+    "cap:open": "npx cap open ios"
+  },
+  "keywords": [],
+  "author": "RxFit AI",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@capacitor/cli": "^7.5.0",
+    "@capacitor/core": "^8.1.0",
+    "@capacitor/ios": "^8.1.0",
+    "@capacitor/network": "^8.0.1",
+    "@capacitor/preferences": "^8.0.1",
+    "vite": "^7.3.1"
+  }
+}
