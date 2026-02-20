@@ -78,6 +78,30 @@ h1, h2, h3, h4, h5, h6 {
   position: relative;
 }
 
+.offline-banner {
+  position: fixed;
+  top: env(safe-area-inset-top, 0);
+  left: 0;
+  right: 0;
+  height: 36px;
+  background-color: var(--error-red);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 13px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  z-index: 1000;
+  transition: transform 0.3s ease;
+}
+
+.offline-icon {
+  font-size: 8px;
+  opacity: 0.8;
+}
+
 .screen {
   position: absolute;
   top: 0;
@@ -110,7 +134,7 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
   justify-content: center;
   padding: 40px 24px;
-  padding-bottom: 80px;
+  padding-bottom: 100px;
   background-color: var(--bg-dark);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -241,6 +265,41 @@ h1, h2, h3, h4, h5, h6 {
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
+.input-group-password {
+  position: relative;
+}
+
+.input-group-password input {
+  padding-right: 48px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.2s ease;
+  padding: 0;
+}
+
+.password-toggle:hover,
+.password-toggle:active {
+  color: var(--text-foreground);
+}
+
+.eye-icon {
+  display: block;
+}
+
 .input-group input::placeholder {
   color: var(--text-muted);
 }
@@ -325,6 +384,61 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--accent-gold);
 }
 
+.biometric-section {
+  width: 100%;
+  max-width: 340px;
+  margin-top: 20px;
+}
+
+.biometric-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.biometric-divider-line {
+  flex: 1;
+  height: 1px;
+  background-color: var(--border-color);
+}
+
+.biometric-divider-text {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.biometric-btn {
+  width: 100%;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  color: var(--text-foreground);
+  font-size: 15px;
+  font-weight: 500;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.biometric-btn:hover,
+.biometric-btn:active {
+  border-color: var(--accent-gold);
+  background-color: rgba(232, 180, 48, 0.05);
+}
+
+.biometric-icon {
+  flex-shrink: 0;
+}
+
 .loading-error {
   display: none;
   flex-direction: column;
@@ -393,6 +507,30 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 12px;
   font-family: var(--font-body);
   color: var(--text-muted);
+}
+
+.footer .app-version {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  color: var(--text-muted);
+  opacity: 0.6;
+  margin-bottom: 4px;
+  letter-spacing: 0.05em;
+}
+
+.footer .privacy-link {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer .privacy-link:hover,
+.footer .privacy-link:active {
+  color: var(--accent-gold);
 }
 
 .footer a {

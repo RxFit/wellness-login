@@ -4,7 +4,7 @@
 iOS Capacitor wrapper app for the RxFit Wellness platform (https://app.rxfit.ai). This is a B2B2C wellness coaching platform for Industrial Athletes. The app provides a native iOS shell with HealthKit integration that wraps the existing web application.
 
 ## Current State
-- **Phase**: MVP Complete - Ready for Xcode build
+- **Phase**: Pre-publish polish complete - Ready for Xcode build and App Store submission
 - **Last Updated**: 2026-02-20
 
 ## Architecture
@@ -12,19 +12,21 @@ iOS Capacitor wrapper app for the RxFit Wellness platform (https://app.rxfit.ai)
 ### Tech Stack
 - **Web Layer**: Vanilla HTML/CSS/JS with Vite bundler
 - **Native Bridge**: Capacitor 8 (iOS)
-- **Native Plugin**: Custom Swift HealthKit plugin
+- **Native Plugins**: Custom Swift HealthKit plugin, @capgo/capacitor-native-biometric (Face ID/Touch ID)
+- **Capacitor Plugins**: @capacitor/haptics, @capacitor/browser, @capacitor/network, @capacitor/preferences
 - **Target**: iOS 16.0+
 - **Bundle ID**: com.rxfit.wellness
 
 ### Project Structure
 ```
 rxfit-wellness/
-├── src/                          # Web source files (login screen UI)
-│   ├── index.html                # Main HTML with all screens
+├── src/                          # Web source files
+│   ├── index.html                # Main HTML with splash, login, healthkit, loading screens
+│   ├── privacy-policy.html       # Privacy policy page (required for App Store)
 │   ├── css/app.css               # Clinical Luxury dark theme styling
 │   └── js/
 │       ├── app.js                # Main app controller & lifecycle
-│       ├── auth.js               # Authentication service (cookie-based)
+│       ├── auth.js               # Auth service + biometrics + remember me
 │       ├── healthkit.js          # HealthKit JS bridge service
 │       └── screens.js            # Screen navigation manager
 ├── ios-plugins/RxFitHealthKit/   # Native Swift HealthKit plugin
@@ -33,28 +35,33 @@ rxfit-wellness/
 │   ├── HealthKitSyncManager.swift    # HealthKit query & data formatting
 │   └── UIColor+RxFit.swift           # UIColor extension with full brand palette
 ├── ios-config/                   # iOS configuration files
-│   ├── Info.plist                # App config + privacy descriptions
+│   ├── Info.plist                # App config + privacy descriptions + Face ID + WKAppBoundDomains
 │   ├── RxFitWellness.entitlements    # HealthKit + background capabilities
-│   ├── AppDelegate.swift         # App lifecycle + background fetch
-│   └── LaunchScreen.storyboard   # Branded launch screen
+│   ├── AppDelegate.swift         # App lifecycle + background fetch + session expiry
+│   ├── LaunchScreen.storyboard   # Branded launch screen
+│   └── AppIcon.appiconset/       # App icon asset catalog with Contents.json
+├── app-icon/icon-1024.png        # Source app icon (1024x1024)
 ├── capacitor.config.ts           # Capacitor config
 ├── vite.config.js                # Vite dev server config
 ├── SETUP_GUIDE.md                # Full Xcode setup instructions
+├── APP_STORE_DESCRIPTION.md      # App Store listing text and review notes
 └── package.json
 ```
 
 ### App Flow
-1. Launch screen (dark branded splash)
+1. Splash screen (branded logo + spinner while checking session)
 2. Check for existing session cookie
-3. If no session: show login screen -> POST to /api/auth/client-login
-4. If new user on iOS: show HealthKit permission screen
-5. Load https://app.rxfit.ai in WKWebView with session cookie
-6. Sync HealthKit data on foreground and via background delivery
+3. If no session: show login screen with biometric option (if available)
+4. Login via email/password or Face ID/Touch ID
+5. If new user on iOS: show HealthKit permission screen
+6. Verify server reachability, then load https://app.rxfit.ai
+7. Sync HealthKit data on foreground and via background delivery
+8. Session expiry detected at native level, returns to login
 
 ### API Endpoints
 - `POST /api/auth/client-login` — Email/password auth
 - `POST /api/healthkit/sync` — Send HealthKit samples (max 5000/batch)
-- `GET /api/healthkit/status` — Check HealthKit connection
+- `GET /api/healthkit/status` — Check HealthKit connection / session validity
 - `POST /api/healthkit/disconnect` — Disconnect HealthKit
 
 ### Design System — "Clinical Luxury"
@@ -82,8 +89,18 @@ rxfit-wellness/
 - 2026-02-20: Added keyboard scroll handling for small iPhone screens
 - 2026-02-20: Added "Forgot password?" link (opens in system browser via @capacitor/browser)
 - 2026-02-20: Added loading failure recovery with retry button and back-to-login option
-- 2026-02-20: Added session expiry detection (polls /api/healthkit/status every 30s, bounces to login on 401)
+- 2026-02-20: Added session expiry detection (native AppDelegate level, checks on foreground)
 - 2026-02-20: Increased all input/button touch targets to 48px (Apple HIG minimum 44px)
+- 2026-02-20: Added privacy policy page for App Store compliance
+- 2026-02-20: Added AppIcon asset catalog with Contents.json
+- 2026-02-20: Added offline detection with banner (Capacitor Network plugin)
+- 2026-02-20: Added splash screen for smooth session-check transition
+- 2026-02-20: Added haptic feedback on login success/error (@capacitor/haptics)
+- 2026-02-20: Added version display in login footer (v1.0.0)
+- 2026-02-20: Added password visibility toggle (show/hide eye icon)
+- 2026-02-20: Added remember me (email pre-fill from last login)
+- 2026-02-20: Added Face ID / Touch ID biometric login (@capgo/capacitor-native-biometric)
+- 2026-02-20: Added NSFaceIDUsageDescription to Info.plist
 
 ## User Preferences
 - Design aesthetic: "Clinical Luxury" — clean, minimal, high-end medical/wellness feel
@@ -95,4 +112,6 @@ rxfit-wellness/
 - Once authenticated, Capacitor navigates to the live web app at app.rxfit.ai
 - HealthKit plugin is in ios-plugins/ and must be copied into Xcode project manually
 - iOS config files are in ios-config/ and must be copied after `cap add ios`
+- Biometric credentials stored in iOS Keychain via @capgo/capacitor-native-biometric
+- Privacy policy at src/privacy-policy.html — URL needed for App Store Connect
 - See SETUP_GUIDE.md for complete Xcode build instructions

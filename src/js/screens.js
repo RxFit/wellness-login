@@ -1,17 +1,18 @@
 export class ScreenManager {
   constructor() {
     this.screens = {
+      splash: document.getElementById('splash-screen'),
       login: document.getElementById('login-screen'),
       healthkit: document.getElementById('healthkit-screen'),
       loading: document.getElementById('loading-screen'),
       webview: document.getElementById('webview-screen'),
     };
-    this.currentScreen = 'login';
+    this.currentScreen = 'splash';
   }
 
   show(screenName) {
     Object.values(this.screens).forEach((screen) => {
-      screen.classList.remove('active');
+      if (screen) screen.classList.remove('active');
     });
 
     const target = this.screens[screenName];

@@ -12,12 +12,24 @@ class RxFitApp {
     this.screens = new ScreenManager();
     this.isNative = typeof window.Capacitor !== 'undefined' && window.Capacitor.isNativePlatform();
     this.loadTimer = null;
+    this.isOnline = true;
   }
 
   async init() {
+    this.screens.show('splash');
+    this.displayVersion();
     this.bindEvents();
     this.setupKeyboardHandling();
+    this.setupNetworkMonitoring();
+    await this.prefillRememberedEmail();
     await this.checkExistingSession();
+  }
+
+  displayVersion() {
+    const versionEl = document.getElementById('app-version');
+    if (versionEl) {
+      versionEl.textContent = `v${this.auth.getVersion()}`;
+    }
   }
 
   bindEvents() {
@@ -38,6 +50,12 @@ class RxFitApp {
 
     const backBtn = document.getElementById('back-to-login-btn');
     backBtn.addEventListener('click', () => this.handleBackToLogin());
+
+    const togglePassword = document.getElementById('toggle-password');
+    togglePassword.addEventListener('click', () => this.togglePasswordVisibility());
+
+    const biometricBtn = document.getElementById('biometric-btn');
+    biometricBtn.addEventListener('click', () => this.handleBiometricLogin());
 
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible' && this.auth.isAuthenticated()) {
@@ -70,17 +88,94 @@ class RxFitApp {
     }
   }
 
+  setupNetworkMonitoring() {
+    const updateOnlineStatus = (online) => {
+      this.isOnline = online;
+      const banner = document.getElementById('offline-banner');
+      if (banner) {
+        banner.style.display = online ? 'none' : 'flex';
+      }
+    };
+
+    if (this.isNative && window.Capacitor?.Plugins?.Network) {
+      window.Capacitor.Plugins.Network.getStatus().then((status) => {
+        updateOnlineStatus(status.connected);
+      }).catch(() => {});
+
+      window.Capacitor.Plugins.Network.addListener('networkStatusChange', (status) => {
+        updateOnlineStatus(status.connected);
+      });
+    } else {
+      updateOnlineStatus(navigator.onLine);
+      window.addEventListener('online', () => updateOnlineStatus(true));
+      window.addEventListener('offline', () => updateOnlineStatus(false));
+    }
+  }
+
+  async prefillRememberedEmail() {
+    const email = await this.auth.getRememberedEmail();
+    if (email) {
+      const emailInput = document.getElementById('email');
+      if (emailInput) {
+        emailInput.value = email;
+      }
+    }
+  }
+
+  async setupBiometrics() {
+    const bioResult = await this.auth.isBiometricAvailable();
+    if (!bioResult.available) return;
+
+    const hasCreds = await this.auth.hasBiometricCredentials();
+    if (!hasCreds) return;
+
+    const section = document.getElementById('biometric-section');
+    const label = document.getElementById('biometric-label');
+    if (section && label) {
+      label.textContent = bioResult.label;
+      section.style.display = 'block';
+    }
+  }
+
   async checkExistingSession() {
     const hasSession = await this.auth.checkSession();
     if (hasSession) {
       this.loadWebApp();
     } else {
+      await this.setupBiometrics();
       this.screens.show('login');
+    }
+  }
+
+  async triggerHaptic(style) {
+    if (!this.isNative) return;
+    try {
+      const { Haptics, ImpactStyle, NotificationType } = await import('@capacitor/haptics');
+      if (style === 'success') {
+        await Haptics.notification({ type: NotificationType.Success });
+      } else if (style === 'error') {
+        await Haptics.notification({ type: NotificationType.Error });
+      } else if (style === 'light') {
+        await Haptics.impact({ style: ImpactStyle.Light });
+      } else {
+        await Haptics.impact({ style: ImpactStyle.Medium });
+      }
+    } catch (e) {
+      // ignore
     }
   }
 
   async handleLogin(e) {
     e.preventDefault();
+
+    if (!this.isOnline) {
+      const errorEl = document.getElementById('error-message');
+      errorEl.textContent = 'No internet connection. Please check your network and try again.';
+      errorEl.style.display = 'block';
+      await this.triggerHaptic('error');
+      return;
+    }
+
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
     const errorEl = document.getElementById('error-message');
@@ -96,22 +191,80 @@ class RxFitApp {
     try {
       const result = await this.auth.login(email, password);
       if (result.success) {
+        await this.triggerHaptic('success');
+
+        if (this.isNative) {
+          await this.auth.saveBiometricCredentials(email, password);
+        }
+
         if (this.isNative && !this.healthkit.hasBeenPrompted()) {
           this.screens.show('healthkit');
         } else {
           this.loadWebApp();
         }
       } else {
+        await this.triggerHaptic('error');
         errorEl.textContent = result.error || 'Invalid email or password';
         errorEl.style.display = 'block';
       }
     } catch (err) {
+      await this.triggerHaptic('error');
       errorEl.textContent = 'Connection error. Please try again.';
       errorEl.style.display = 'block';
     } finally {
       btn.disabled = false;
       btnText.style.display = 'inline';
       btnLoader.style.display = 'none';
+    }
+  }
+
+  async handleBiometricLogin() {
+    if (!this.isOnline) {
+      const errorEl = document.getElementById('error-message');
+      errorEl.textContent = 'No internet connection. Please check your network and try again.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    const biometricBtn = document.getElementById('biometric-btn');
+    biometricBtn.disabled = true;
+
+    try {
+      const result = await this.auth.biometricLogin();
+      if (result.success) {
+        await this.triggerHaptic('success');
+
+        if (this.isNative && !this.healthkit.hasBeenPrompted()) {
+          this.screens.show('healthkit');
+        } else {
+          this.loadWebApp();
+        }
+      } else if (result.error !== 'cancelled') {
+        await this.triggerHaptic('error');
+        const errorEl = document.getElementById('error-message');
+        errorEl.textContent = result.error;
+        errorEl.style.display = 'block';
+      }
+    } catch (err) {
+      console.error('Biometric login error:', err);
+    } finally {
+      biometricBtn.disabled = false;
+    }
+  }
+
+  togglePasswordVisibility() {
+    const passwordInput = document.getElementById('password');
+    const eyeIcon = document.getElementById('eye-icon');
+    const eyeOffIcon = document.getElementById('eye-off-icon');
+
+    if (passwordInput.type === 'password') {
+      passwordInput.type = 'text';
+      eyeIcon.style.display = 'none';
+      eyeOffIcon.style.display = 'block';
+    } else {
+      passwordInput.type = 'password';
+      eyeIcon.style.display = 'block';
+      eyeOffIcon.style.display = 'none';
     }
   }
 
