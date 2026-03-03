@@ -177,11 +177,12 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .login-logo-badge {
-  width: 336px;
-  max-width: 90vw;
+  width: 240px;
+  max-width: 70vw;
   height: auto;
-  margin-bottom: 8px;
+  margin-bottom: 16px;
   object-fit: contain;
+  mix-blend-mode: screen;
 }
 
 .login-subtitle {
@@ -195,17 +196,19 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .splash-logo-badge {
-  width: 200px;
+  width: 160px;
   height: auto;
   object-fit: contain;
   margin-bottom: 24px;
+  mix-blend-mode: screen;
 }
 
 .healthkit-logo-badge {
-  width: 120px;
+  width: 100px;
   height: auto;
   object-fit: contain;
   margin-bottom: 20px;
+  mix-blend-mode: screen;
 }
 
 .logo {
