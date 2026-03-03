@@ -1,24 +1,21 @@
 :root {
-  --bg-dark: #050505;
-  --bg-card: #121212;
-  --bg-secondary: #1A1A1A;
-  --bg-accent: #1E1E1E;
-  --bg-muted: #161616;
-  --bg-input: #1A1A1A;
-  --bg-popover: #0A0A0A;
+  --bg-dark: #0C1217;
+  --bg-card: #11171D;
+  --bg-secondary: #1D242A;
+  --bg-accent: #212930;
+  --bg-muted: #1C2228;
+  --bg-input: #2E3842;
+  --bg-popover: #121A21;
 
-  --accent-gold: #C5A059;
-  --accent-gold-fg: #050505;
+  --accent-gold: #E8B430;
+  --accent-gold-fg: #0A0F15;
 
-  --clinical-white: #F8F8F6;
-  --clinical-white-fg: #050505;
+  --text-foreground: #D3DBDE;
+  --text-muted: #73848C;
+  --text-secondary: #BFC9CE;
 
-  --text-foreground: #E0E0E0;
-  --text-muted: #6B6B6B;
-  --text-secondary: #A0A0A0;
-
-  --border-color: #2A2A2A;
-  --border-card: #2A2A2A;
+  --border-color: #1F262E;
+  --border-card: #1D242B;
 
   --destructive: #F2800D;
   --error-red: #D94040;
@@ -32,7 +29,7 @@
   --hr-cardio: #F97316;
   --hr-peak: #EF4444;
 
-  --chart-1: #C5A059;
+  --chart-1: #E8B430;
   --chart-2: #2EB8B8;
   --chart-3: #39AC39;
   --chart-4: #F48C25;
@@ -40,7 +37,7 @@
 
   --font-body: 'Inter', 'Helvetica Neue', Arial, sans-serif;
   --font-heading: 'JetBrains Mono', 'Fira Code', 'SF Mono', Menlo, monospace;
-  --radius: 0px;
+  --radius: 4px;
 }
 
 * {
@@ -128,13 +125,6 @@ h1, h2, h3, h4, h5, h6 {
   -webkit-overflow-scrolling: touch;
 }
 
-.grid-bg {
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-  background-size: 40px 40px;
-}
-
 .login-container,
 .healthkit-container {
   width: 100%;
@@ -146,10 +136,6 @@ h1, h2, h3, h4, h5, h6 {
   padding: 40px 24px;
   padding-bottom: 100px;
   background-color: var(--bg-dark);
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-  background-size: 40px 40px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
@@ -163,10 +149,6 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: center;
   padding: 40px 24px;
   background-color: var(--bg-dark);
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-  background-size: 40px 40px;
 }
 
 .logo-section {
@@ -177,12 +159,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .login-logo-badge {
-  width: 240px;
-  max-width: 70vw;
+  width: 336px;
+  max-width: 90vw;
   height: auto;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
   object-fit: contain;
-  mix-blend-mode: screen;
 }
 
 .login-subtitle {
@@ -190,31 +171,29 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 1.1rem;
   letter-spacing: 0.25em;
   text-transform: uppercase;
-  color: var(--clinical-white);
+  color: #FFFFFF;
   text-align: center;
   margin: 0 0 24px 0;
 }
 
 .splash-logo-badge {
-  width: 160px;
+  width: 200px;
   height: auto;
   object-fit: contain;
   margin-bottom: 24px;
-  mix-blend-mode: screen;
 }
 
 .healthkit-logo-badge {
-  width: 100px;
+  width: 120px;
   height: auto;
   object-fit: contain;
   margin-bottom: 20px;
-  mix-blend-mode: screen;
 }
 
 .logo {
   width: 96px;
   height: 96px;
-  border: 1px solid var(--accent-gold);
+  border: 1.5px solid var(--accent-gold);
   border-radius: var(--radius);
   display: flex;
   align-items: center;
@@ -370,7 +349,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .input-group input:focus {
   border-color: var(--accent-gold);
-  box-shadow: 0 0 0 2px rgba(197, 160, 89, 0.2);
+  box-shadow: 0 0 0 2px rgba(232, 180, 48, 0.25);
 }
 
 .error-message {
@@ -386,24 +365,22 @@ h1, h2, h3, h4, h5, h6 {
   max-width: 340px;
   padding: 0 16px;
   height: 48px;
-  background-color: var(--clinical-white);
-  color: var(--clinical-white-fg);
-  border: 1px solid var(--clinical-white);
+  background-color: var(--accent-gold);
+  color: var(--accent-gold-fg);
+  border: none;
   border-radius: var(--radius);
   font-size: 16px;
   font-weight: 600;
   font-family: var(--font-body);
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  transition: opacity 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .primary-btn:hover {
-  background-color: var(--bg-dark);
-  color: var(--clinical-white);
-  border-color: var(--accent-gold);
+  opacity: 0.9;
 }
 
 .primary-btn:disabled {
@@ -429,7 +406,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .ghost-btn:hover {
-  color: var(--accent-gold);
+  color: var(--text-foreground);
 }
 
 .forgot-password-link {
@@ -498,7 +475,7 @@ h1, h2, h3, h4, h5, h6 {
 .biometric-btn:hover,
 .biometric-btn:active {
   border-color: var(--accent-gold);
-  background-color: rgba(197, 160, 89, 0.05);
+  background-color: rgba(232, 180, 48, 0.05);
 }
 
 .biometric-icon {
@@ -608,8 +585,8 @@ h1, h2, h3, h4, h5, h6 {
   display: inline-block;
   width: 20px;
   height: 20px;
-  border: 2px solid rgba(5, 5, 5, 0.3);
-  border-top-color: var(--clinical-white-fg);
+  border: 2px solid rgba(10, 15, 21, 0.3);
+  border-top-color: var(--accent-gold-fg);
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
 }
@@ -617,7 +594,7 @@ h1, h2, h3, h4, h5, h6 {
 .spinner.large {
   width: 32px;
   height: 32px;
-  border: 2px solid rgba(197, 160, 89, 0.15);
+  border: 2px solid rgba(232, 180, 48, 0.15);
   border-top-color: var(--accent-gold);
 }
 
@@ -699,7 +676,7 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background-color: rgba(197, 160, 89, 0.12);
+  background-color: rgba(232, 180, 48, 0.12);
   color: var(--accent-gold);
   font-family: var(--font-heading);
   font-size: 13px;

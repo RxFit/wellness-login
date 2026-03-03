@@ -64,22 +64,19 @@ rxfit-wellness/
 - `GET /api/healthkit/status` — Check HealthKit connection / session validity
 - `POST /api/healthkit/disconnect` — Disconnect HealthKit
 
-### Design System — "F1 Clinical Luxury"
-- **Aesthetic**: F1-inspired high-performance engineering meets clinical wellness — deep matte blacks, sharp brutalist edges, champagne gold accents
-- **Background (dark)**: #050505 (deep matte black, no blue tint)
-- **Card (dark)**: #121212
-- **Input (dark)**: #1A1A1A
-- **Gold accent**: #C5A059 (muted champagne gold)
-- **Clinical white (CTA)**: #F8F8F6 (egg white for primary buttons)
-- **Text foreground**: #E0E0E0
-- **Text muted**: #6B6B6B
-- **Border (dark)**: #2A2A2A
-- **Body font**: Inter (geometric sans-serif)
-- **Heading font**: JetBrains Mono (monospaced, telemetry feel)
-- **Border radius**: 0px — sharp brutalist edges, no rounding
-- **Shadows**: None
-- **Background pattern**: Subtle engineering grid lines at 2% opacity, 40px spacing
-- **Primary button**: Egg white bg (#F8F8F6) with black text; hover inverts to black bg, gold border, white text
+### Design System — "Clinical Luxury"
+- **Aesthetic**: Clean, minimal, high-end medical/wellness feel
+- **Background (dark)**: #0C1217
+- **Card (dark)**: #11171D
+- **Input (dark)**: #2E3842
+- **Gold accent (dark)**: #E8B430
+- **Text foreground**: #D3DBDE
+- **Text muted**: #73848C
+- **Border (dark)**: #1F262E
+- **Body font**: Inter
+- **Heading font**: JetBrains Mono
+- **Border radius**: 4px (0.25rem) — almost squared-off
+- **Shadows**: None in dark mode
 
 ## Recent Changes
 - 2026-02-20: Initial project setup with full Capacitor iOS app structure
@@ -118,19 +115,9 @@ rxfit-wellness/
   - MEDIUM: Added null guards for all DOM queries in app.js bindEvents/handlers
   - MEDIUM: Safe unwrapped force-unwrapped URLs in AppDelegate.swift
   - MEDIUM: Fixed invalid URL scheme "RxFit Wellness" → "rxfitwellness" in capacitor.config.ts
-- 2026-03-03: **F1 Clinical Luxury aesthetic overhaul:**
-  - Backgrounds shifted from blue-tinted darks to pure matte blacks (#050505, #121212)
-  - Gold accent changed from bright #E8B430 to muted champagne #C5A059
-  - All border-radius set to 0px (sharp brutalist edges)
-  - Primary buttons now egg white (#F8F8F6) with black text, hover inverts to black/gold
-  - Added subtle engineering grid background (2% opacity, 40px spacing)
-  - Updated UIColor+RxFit.swift with new palette (no blue tint, pure grays)
-  - Updated LaunchScreen.storyboard colors and removed corner radius
-  - Updated privacy-policy.html inline styles to match
-  - Updated theme-color meta tag to #050505
 
 ## User Preferences
-- Design aesthetic: "F1 Clinical Luxury" — F1-inspired high-performance engineering meets clinical wellness
+- Design aesthetic: "Clinical Luxury" — clean, minimal, high-end medical/wellness feel
 - Terminology: Use "athlete" (never "participant" or "user")
 - Full style guide reference: attached_assets/ios-wrapper-style-guide_1771547350951.md
 
