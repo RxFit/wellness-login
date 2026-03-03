@@ -1,0 +1,28 @@
+The Replit Prompt
+Role & Goal: You are an elite frontend developer and UI/UX designer. Build a high-end, responsive web dashboard for a "clinical luxury modern wellness" application. The aesthetic is heavily inspired by the Apple Original movie F1—think high-performance engineering, apex human metrics, and stark, pristine luxury.
+
+Tech Stack: React, Tailwind CSS, Lucide React (for sharp, minimalist icons), and Framer Motion (for smooth, engineered micro-interactions).
+
+Color Palette & Styling Guidelines:
+
+Background (Shadow Blacks): Use deep, matte blacks and carbon-grays (bg-[#050505] for the main canvas, bg-[#121212] for secondary panels).
+
+Primary Surfaces (Clinical Egg White): Use crisp, clinical egg white (#F8F8F6) for high-contrast cards or biometric focus areas to give a sterile, pristine, and focused look.
+
+Accents (Apex Gold): Use a muted, metallic champagne gold (text-[#C5A059] or border-[#C5A059]) sparingly for primary actions, active states, and key biometric data highlights.
+
+Typography: Use a highly legible, geometric sans-serif font (like Inter or Space Grotesk). Use a monospaced font for numbers and metrics (like sleep score, HRV, VO2 Max) to mimic F1 telemetry data.
+
+Edges & Borders: NO soft, rounded corners. Use sharp, brutalist edges (rounded-none or absolute maximum rounded-sm). Emphasize crisp, 1px borders in deep gray (border-[#2A2A2A]) or gold.
+
+Core Interface Elements to Build:
+
+A Telemetry Dashboard: A grid of sharp-edged cards displaying high-performance wellness metrics (e.g., Nervous System Recovery, Cellular Hydration, Sleep Architecture).
+
+Navigation/Sidebar: A sleek, vertical dark sidebar with gold hover states and minimalist icons.
+
+Clinical Call-to-Action: A booking or "Initialize Protocol" button that features a stark egg-white background with sharp black text, turning inverted (black background, gold border, white text) on hover.
+
+Visual Polish: Add subtle, slow-moving fade-in animations using Framer Motion to make the dashboard feel like a high-end medical display turning on. Use grid lines in the background (bg-grid-white/[0.02]) to emphasize the engineering aesthetic.
+
+Output: Generate the complete, working React code for this main dashboard view. Ensure the contrast is accessible but maintains a moody, high-stakes cinematic atmosphere.
