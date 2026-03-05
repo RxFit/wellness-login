@@ -4,8 +4,8 @@
 iOS Capacitor wrapper app for the RxFit Wellness platform (https://app.rxfit.ai). This is a B2B2C wellness coaching platform for Industrial Athletes. The app provides a native iOS shell with HealthKit integration that wraps the existing web application.
 
 ## Current State
-- **Phase**: Pre-publish polish complete - Ready for Xcode build and App Store submission
-- **Last Updated**: 2026-02-20
+- **Phase**: App Store ready — all audit issues resolved
+- **Last Updated**: 2026-03-05
 
 ## Architecture
 
@@ -27,6 +27,7 @@ rxfit-wellness/
 │   └── js/
 │       ├── app.js                # Main app controller & lifecycle
 │       ├── auth.js               # Auth service + biometrics + remember me
+│       ├── constants.js          # Shared constants (APP_VERSION)
 │       ├── healthkit.js          # HealthKit JS bridge service
 │       └── screens.js            # Screen navigation manager
 ├── ios-plugins/RxFitHealthKit/   # Native Swift HealthKit plugin
@@ -128,6 +129,12 @@ rxfit-wellness/
   - Updated LaunchScreen.storyboard colors and removed corner radius
   - Updated privacy-policy.html inline styles to match
   - Updated theme-color meta tag to #050505
+- 2026-03-05: **Final App Store audit — 5 remaining issues fixed:**
+  - Expanded HealthKit background delivery from 3 to all 14 data types with observer queries
+  - Added "I've Enabled It — Check Again" re-check button on HealthKit denied screen
+  - Added NSHealthUpdateUsageDescription to Info.plist (required even for read-only apps)
+  - Added 'processing' to UIBackgroundModes in Info.plist
+  - Created shared version constant (src/js/constants.js) — removed hardcoded '1.0.0' from auth.js and healthkit.js
 
 ## User Preferences
 - Design aesthetic: "F1 Clinical Luxury" — F1-inspired high-performance engineering meets clinical wellness

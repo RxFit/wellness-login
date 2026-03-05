@@ -1,4 +1,4 @@
-const APP_VERSION = '1.0.0';
+import { APP_VERSION } from './constants.js';
 
 export class AuthService {
   constructor(apiBase) {

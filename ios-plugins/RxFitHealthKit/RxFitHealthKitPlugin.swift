@@ -96,15 +96,32 @@ public class RxFitHealthKitPlugin: CAPPlugin, CAPBridgedPlugin {
     @objc func enableBackgroundDelivery(_ call: CAPPluginCall) {
         var allTypes: [HKSampleType] = []
 
-        if let hr = HKQuantityType.quantityType(forIdentifier: .heartRate) {
-            allTypes.append(hr)
+        let quantityIdentifiers: [HKQuantityTypeIdentifier] = [
+            .heartRate,
+            .restingHeartRate,
+            .heartRateVariabilitySDNN,
+            .stepCount,
+            .activeEnergyBurned,
+            .basalEnergyBurned,
+            .distanceWalkingRunning,
+            .bodyMass,
+            .bodyFatPercentage,
+            .oxygenSaturation,
+            .respiratoryRate,
+            .vo2Max,
+        ]
+
+        for identifier in quantityIdentifiers {
+            if let type = HKQuantityType.quantityType(forIdentifier: identifier) {
+                allTypes.append(type)
+            }
         }
-        if let sc = HKQuantityType.quantityType(forIdentifier: .stepCount) {
-            allTypes.append(sc)
-        }
+
         if let sleep = HKCategoryType.categoryType(forIdentifier: .sleepAnalysis) {
             allTypes.append(sleep)
         }
+
+        allTypes.append(HKWorkoutType.workoutType())
 
         let group = DispatchGroup()
         var enabledCount = 0

@@ -1,3 +1,5 @@
+import { APP_VERSION } from './constants.js';
+
 export class HealthKitService {
   constructor(apiBase) {
     this.apiBase = apiBase;
@@ -123,7 +125,7 @@ export class HealthKitService {
             deviceInfo: deviceInfo || {
               model: 'Unknown',
               systemVersion: 'Unknown',
-              appVersion: '1.0.0',
+              appVersion: APP_VERSION,
             },
           }),
         });

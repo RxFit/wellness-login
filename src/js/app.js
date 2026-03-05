@@ -57,6 +57,9 @@ class RxFitApp {
     const biometricBtn = document.getElementById('biometric-btn');
     if (biometricBtn) biometricBtn.addEventListener('click', () => this.handleBiometricLogin());
 
+    const recheckBtn = document.getElementById('recheck-healthkit-btn');
+    if (recheckBtn) recheckBtn.addEventListener('click', () => this.handleRecheckHealthKit());
+
     const openHealthSettingsBtn = document.getElementById('open-health-settings-btn');
     if (openHealthSettingsBtn) openHealthSettingsBtn.addEventListener('click', () => this.openHealthSettings());
 
@@ -328,6 +331,41 @@ class RxFitApp {
   openHealthSettings() {
     if (this.isNative && window.Capacitor?.Plugins?.Browser) {
       window.Capacitor.Plugins.Browser.open({ url: 'x-apple-health://' });
+    }
+  }
+
+  async handleRecheckHealthKit() {
+    const btn = document.getElementById('recheck-healthkit-btn');
+    const errorEl = document.getElementById('recheck-error');
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Checking...';
+    }
+    if (errorEl) errorEl.style.display = 'none';
+
+    try {
+      const granted = await this.healthkit.requestPermissions();
+
+      if (granted) {
+        await this.triggerHaptic('success');
+        await this.healthkit.performInitialSync();
+        this.healthkit.startBackgroundDelivery();
+        this.loadWebApp();
+      } else {
+        await this.triggerHaptic('error');
+        if (errorEl) errorEl.style.display = 'block';
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = 'I\'ve Enabled It — Check Again';
+        }
+      }
+    } catch (err) {
+      console.error('Re-check HealthKit error:', err);
+      if (errorEl) errorEl.style.display = 'block';
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = 'I\'ve Enabled It — Check Again';
+      }
     }
   }
 
