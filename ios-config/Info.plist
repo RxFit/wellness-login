@@ -28,9 +28,6 @@
     <key>NSHealthShareUsageDescription</key>
     <string>RxFit Wellness reads your health data to provide personalized coaching insights, track your heart rate zones during workouts, monitor recovery through sleep and HRV analysis, and help your coach optimize your training program.</string>
 
-    <key>NSHealthUpdateUsageDescription</key>
-    <string>RxFit Wellness does not write any data to Apple Health. This app only reads your health data to provide personalized coaching insights.</string>
-
     <key>NSFaceIDUsageDescription</key>
     <string>RxFit Wellness uses Face ID to let you sign in quickly and securely without re-entering your password.</string>
 
@@ -38,6 +35,11 @@
     <array>
         <string>fetch</string>
         <string>processing</string>
+    </array>
+
+    <key>BGTaskSchedulerPermittedIdentifiers</key>
+    <array>
+        <string>com.rxfit.wellness.healthsync</string>
     </array>
 
     <key>UILaunchStoryboardName</key>
@@ -66,8 +68,6 @@
             <dict>
                 <key>NSIncludesSubdomains</key>
                 <true/>
-                <key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
-                <false/>
             </dict>
         </dict>
     </dict>
@@ -76,7 +76,6 @@
     <array>
         <string>app.rxfit.ai</string>
         <string>rxfit.ai</string>
-        <string>localhost</string>
     </array>
 </dict>
 </plist>

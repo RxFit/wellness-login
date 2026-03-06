@@ -3,7 +3,7 @@ import UIKit
 extension UIColor {
     struct RxFit {
         static let gold = UIColor(red: 0.77, green: 0.63, blue: 0.35, alpha: 1.0)
-        static let goldDark = UIColor(red: 0.77, green: 0.63, blue: 0.35, alpha: 1.0)
+        static let goldDark = UIColor(red: 0.82, green: 0.68, blue: 0.40, alpha: 1.0)
 
         static let backgroundLight = UIColor(red: 0.97, green: 0.97, blue: 0.96, alpha: 1.0)
         static let backgroundDark = UIColor(red: 0.02, green: 0.02, blue: 0.02, alpha: 1.0)
