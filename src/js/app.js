@@ -66,6 +66,9 @@ class RxFitApp {
     const skipDeniedBtn = document.getElementById('skip-denied-btn');
     if (skipDeniedBtn) skipDeniedBtn.addEventListener('click', () => this.loadWebApp());
 
+    const deleteAccountLink = document.getElementById('delete-account-link');
+    if (deleteAccountLink) deleteAccountLink.addEventListener('click', (e) => this.handleDeleteAccount(e));
+
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible' && this.auth.isAuthenticated()) {
         this.healthkit.syncNewData();
@@ -109,7 +112,7 @@ class RxFitApp {
     if (this.isNative && window.Capacitor?.Plugins?.Network) {
       window.Capacitor.Plugins.Network.getStatus().then((status) => {
         updateOnlineStatus(status.connected);
-      }).catch(() => {});
+      }).catch(() => { });
 
       window.Capacitor.Plugins.Network.addListener('networkStatusChange', (status) => {
         updateOnlineStatus(status.connected);
@@ -299,6 +302,59 @@ class RxFitApp {
       window.Capacitor.Plugins.Browser.open({ url: resetUrl });
     } else {
       window.open(resetUrl, '_blank');
+    }
+  }
+
+  async handleDeleteAccount(e) {
+    e.preventDefault();
+
+    const confirmed = confirm(
+      'Are you sure you want to delete your account?\n\n' +
+      'This will permanently remove all your data including health records, ' +
+      'coaching history, and account credentials.\n\n' +
+      'This action cannot be undone.'
+    );
+
+    if (!confirmed) return;
+
+    const doubleConfirm = confirm(
+      'This is irreversible. Type OK to confirm you want to permanently delete your account and all associated data.'
+    );
+
+    if (!doubleConfirm) return;
+
+    try {
+      const response = await fetch(`${API_BASE}/api/account/delete`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        // Clear all local data
+        await this.auth.clearSession();
+        await this.auth.clearBiometricCredentials();
+        alert('Your account has been deleted. All data will be removed within 30 days.');
+        this.screens.show('login');
+      } else if (response.status === 404) {
+        // API endpoint not yet implemented — fall back to email
+        const mailUrl = 'mailto:privacy@rxfit.ai?subject=Delete%20My%20Account&body=Please%20delete%20my%20account%20and%20all%20associated%20data.';
+        if (this.isNative && window.Capacitor?.Plugins?.Browser) {
+          window.Capacitor.Plugins.Browser.open({ url: mailUrl });
+        } else {
+          window.location.href = mailUrl;
+        }
+      } else {
+        alert('Unable to delete account right now. Please email privacy@rxfit.ai to request account deletion.');
+      }
+    } catch (err) {
+      console.error('Delete account error:', err);
+      const mailUrl = 'mailto:privacy@rxfit.ai?subject=Delete%20My%20Account&body=Please%20delete%20my%20account%20and%20all%20associated%20data.';
+      if (this.isNative && window.Capacitor?.Plugins?.Browser) {
+        window.Capacitor.Plugins.Browser.open({ url: mailUrl });
+      } else {
+        window.location.href = mailUrl;
+      }
     }
   }
 

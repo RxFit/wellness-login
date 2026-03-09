@@ -26,7 +26,10 @@
     <string>16.0</string>
 
     <key>NSHealthShareUsageDescription</key>
-    <string>RxFit Wellness reads your health data to provide personalized coaching insights, track your heart rate zones during workouts, monitor recovery through sleep and HRV analysis, and help your coach optimize your training program.</string>
+    <string>RxFit Wellness reads your health data to provide personalized coaching insights, track your heart rate zones during workouts, monitor recovery through sleep and HRV analysis, review your nutrition and macronutrient intake, track hydration, analyze your gait and mobility, and help your coach optimize your training program.</string>
+
+    <key>NSHealthUpdateUsageDescription</key>
+    <string>RxFit Wellness does not write data to Apple Health. This permission is declared for compatibility but is never used.</string>
 
     <key>NSFaceIDUsageDescription</key>
     <string>RxFit Wellness uses Face ID to let you sign in quickly and securely without re-entering your password.</string>

@@ -20,18 +20,46 @@ public class RxFitHealthKitPlugin: CAPPlugin, CAPBridgedPlugin {
         var types = Set<HKObjectType>()
 
         let quantityTypes: [HKQuantityTypeIdentifier] = [
+            // Vitals & cardiovascular
             .heartRate,
             .restingHeartRate,
             .heartRateVariabilitySDNN,
+            .oxygenSaturation,
+            .respiratoryRate,
+            .vo2Max,
+            // Body composition
+            .bodyMass,
+            .bodyFatPercentage,
+            .leanBodyMass,
+            // Activity & movement
             .stepCount,
             .activeEnergyBurned,
             .basalEnergyBurned,
             .distanceWalkingRunning,
-            .bodyMass,
-            .bodyFatPercentage,
-            .oxygenSaturation,
-            .respiratoryRate,
-            .vo2Max,
+            .appleExerciseTime,
+            .appleStandTime,
+            .walkingHeartRateAverage,
+            .walkingSpeed,
+            .walkingStepLength,
+            .walkingAsymmetryPercentage,
+            .stairAscentSpeed,
+            .stairDescentSpeed,
+            .sixMinuteWalkTestDistance,
+            // Nutrition — macronutrients
+            .dietaryEnergyConsumed,
+            .dietaryProtein,
+            .dietaryCarbohydrates,
+            .dietaryFatTotal,
+            .dietarySugar,
+            .dietaryFiber,
+            // Nutrition — micronutrients
+            .dietaryCholesterol,
+            .dietarySodium,
+            .dietaryIron,
+            .dietaryPotassium,
+            .dietaryCaffeine,
+            // Hydration
+            .dietaryWater,
         ]
 
         for identifier in quantityTypes {
@@ -97,18 +125,46 @@ public class RxFitHealthKitPlugin: CAPPlugin, CAPBridgedPlugin {
         var allTypes: [HKSampleType] = []
 
         let quantityIdentifiers: [HKQuantityTypeIdentifier] = [
+            // Vitals & cardiovascular
             .heartRate,
             .restingHeartRate,
             .heartRateVariabilitySDNN,
+            .oxygenSaturation,
+            .respiratoryRate,
+            .vo2Max,
+            // Body composition
+            .bodyMass,
+            .bodyFatPercentage,
+            .leanBodyMass,
+            // Activity & movement
             .stepCount,
             .activeEnergyBurned,
             .basalEnergyBurned,
             .distanceWalkingRunning,
-            .bodyMass,
-            .bodyFatPercentage,
-            .oxygenSaturation,
-            .respiratoryRate,
-            .vo2Max,
+            .appleExerciseTime,
+            .appleStandTime,
+            .walkingHeartRateAverage,
+            .walkingSpeed,
+            .walkingStepLength,
+            .walkingAsymmetryPercentage,
+            .stairAscentSpeed,
+            .stairDescentSpeed,
+            .sixMinuteWalkTestDistance,
+            // Nutrition — macronutrients
+            .dietaryEnergyConsumed,
+            .dietaryProtein,
+            .dietaryCarbohydrates,
+            .dietaryFatTotal,
+            .dietarySugar,
+            .dietaryFiber,
+            // Nutrition — micronutrients
+            .dietaryCholesterol,
+            .dietarySodium,
+            .dietaryIron,
+            .dietaryPotassium,
+            .dietaryCaffeine,
+            // Hydration
+            .dietaryWater,
         ]
 
         for identifier in quantityIdentifiers {
@@ -165,12 +221,63 @@ public class RxFitHealthKitPlugin: CAPPlugin, CAPBridgedPlugin {
                 return
             }
 
+            // Notify JS bridge (works when app is in foreground with active WebView)
             self?.notifyListeners("healthKitDataUpdated", data: [
                 "sampleType": sampleType.identifier,
             ])
 
+            // Native fallback: sync directly via HTTP when JS bridge may be unavailable
+            self?.performNativeSync()
+
             completionHandler()
         }
         healthStore.execute(query)
+    }
+
+    private func performNativeSync() {
+        let oneHourAgo = Calendar.current.date(byAdding: .hour, value: -1, to: Date()) ?? Date()
+
+        syncManager.queryAllSamples(
+            healthStore: healthStore,
+            startDate: oneHourAgo,
+            endDate: Date()
+        ) { samples, deviceInfo in
+            guard !samples.isEmpty else { return }
+
+            guard let url = URL(string: "https://app.rxfit.ai/api/healthkit/sync") else { return }
+
+            let body: [String: Any] = [
+                "samples": samples,
+                "deviceInfo": deviceInfo,
+            ]
+
+            guard let jsonData = try? JSONSerialization.data(withJSONObject: body) else { return }
+
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.httpBody = jsonData
+            request.timeoutInterval = 30
+
+            if let cookieURL = URL(string: "https://app.rxfit.ai"),
+               let cookies = HTTPCookieStorage.shared.cookies(for: cookieURL) {
+                let headers = HTTPCookie.requestHeaderFields(with: cookies)
+                for (key, value) in headers {
+                    request.setValue(value, forHTTPHeaderField: key)
+                }
+            }
+
+            URLSession.shared.dataTask(with: request) { _, response, error in
+                if let error = error {
+                    print("RxFit: Observer sync failed: \(error.localizedDescription)")
+                } else if let httpResponse = response as? HTTPURLResponse {
+                    if (200...299).contains(httpResponse.statusCode) {
+                        print("RxFit: Observer sync completed — \(samples.count) samples")
+                    } else {
+                        print("RxFit: Observer sync returned \(httpResponse.statusCode)")
+                    }
+                }
+            }.resume()
+        }
     }
 }

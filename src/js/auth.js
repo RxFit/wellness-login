@@ -11,7 +11,7 @@ export class AuthService {
 
   async login(email, password) {
     try {
-      const response = await fetch(`${this.apiBase}/api/auth/client-login`, {
+      const response = await fetch(`${this.apiBase}/api/client-auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -97,7 +97,7 @@ export class AuthService {
         localStorage.removeItem(this.sessionKey);
       }
     } catch (e) {
-      try { localStorage.removeItem(this.sessionKey); } catch (ex) {}
+      try { localStorage.removeItem(this.sessionKey); } catch (ex) { }
     }
   }
 
@@ -114,7 +114,7 @@ export class AuthService {
         localStorage.setItem(this.rememberedEmailKey, email);
       }
     } catch (e) {
-      try { localStorage.setItem(this.rememberedEmailKey, email); } catch (ex) {}
+      try { localStorage.setItem(this.rememberedEmailKey, email); } catch (ex) { }
     }
   }
 

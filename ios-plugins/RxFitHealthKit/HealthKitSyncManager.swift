@@ -3,49 +3,135 @@ import HealthKit
 import UIKit
 
 class HealthKitSyncManager {
+    static let isoFormatter = ISO8601DateFormatter()
+
     private let unitMapping: [HKQuantityTypeIdentifier: HKUnit] = [
+        // Vitals & cardiovascular
         .heartRate: HKUnit.count().unitDivided(by: .minute()),
         .restingHeartRate: HKUnit.count().unitDivided(by: .minute()),
         .heartRateVariabilitySDNN: HKUnit.secondUnit(with: .milli),
+        .oxygenSaturation: HKUnit.percent(),
+        .respiratoryRate: HKUnit.count().unitDivided(by: .minute()),
+        .vo2Max: HKUnit(from: "ml/kg*min"),
+        // Body composition
+        .bodyMass: HKUnit.gramUnit(with: .kilo),
+        .bodyFatPercentage: HKUnit.percent(),
+        .leanBodyMass: HKUnit.gramUnit(with: .kilo),
+        // Activity & movement
         .stepCount: HKUnit.count(),
         .activeEnergyBurned: HKUnit.kilocalorie(),
         .basalEnergyBurned: HKUnit.kilocalorie(),
         .distanceWalkingRunning: HKUnit.meter(),
-        .bodyMass: HKUnit.gramUnit(with: .kilo),
-        .bodyFatPercentage: HKUnit.percent(),
-        .oxygenSaturation: HKUnit.percent(),
-        .respiratoryRate: HKUnit.count().unitDivided(by: .minute()),
-        .vo2Max: HKUnit(from: "ml/kg*min"),
+        .appleExerciseTime: HKUnit.minute(),
+        .appleStandTime: HKUnit.minute(),
+        .walkingHeartRateAverage: HKUnit.count().unitDivided(by: .minute()),
+        .walkingSpeed: HKUnit.meter().unitDivided(by: .second()),
+        .walkingStepLength: HKUnit.meter(),
+        .walkingAsymmetryPercentage: HKUnit.percent(),
+        .stairAscentSpeed: HKUnit.meter().unitDivided(by: .second()),
+        .stairDescentSpeed: HKUnit.meter().unitDivided(by: .second()),
+        .sixMinuteWalkTestDistance: HKUnit.meter(),
+        // Nutrition — macronutrients
+        .dietaryEnergyConsumed: HKUnit.kilocalorie(),
+        .dietaryProtein: HKUnit.gram(),
+        .dietaryCarbohydrates: HKUnit.gram(),
+        .dietaryFatTotal: HKUnit.gram(),
+        .dietarySugar: HKUnit.gram(),
+        .dietaryFiber: HKUnit.gram(),
+        // Nutrition — micronutrients
+        .dietaryCholesterol: HKUnit.gramUnit(with: .milli),
+        .dietarySodium: HKUnit.gramUnit(with: .milli),
+        .dietaryIron: HKUnit.gramUnit(with: .milli),
+        .dietaryPotassium: HKUnit.gramUnit(with: .milli),
+        .dietaryCaffeine: HKUnit.gramUnit(with: .milli),
+        // Hydration
+        .dietaryWater: HKUnit.literUnit(with: .milli),
     ]
 
     private let unitStringMapping: [HKQuantityTypeIdentifier: String] = [
+        // Vitals & cardiovascular
         .heartRate: "count/min",
         .restingHeartRate: "count/min",
         .heartRateVariabilitySDNN: "ms",
+        .oxygenSaturation: "%",
+        .respiratoryRate: "count/min",
+        .vo2Max: "ml/kg*min",
+        // Body composition
+        .bodyMass: "kg",
+        .bodyFatPercentage: "%",
+        .leanBodyMass: "kg",
+        // Activity & movement
         .stepCount: "count",
         .activeEnergyBurned: "kcal",
         .basalEnergyBurned: "kcal",
         .distanceWalkingRunning: "m",
-        .bodyMass: "kg",
-        .bodyFatPercentage: "%",
-        .oxygenSaturation: "%",
-        .respiratoryRate: "count/min",
-        .vo2Max: "ml/kg*min",
+        .appleExerciseTime: "min",
+        .appleStandTime: "min",
+        .walkingHeartRateAverage: "count/min",
+        .walkingSpeed: "m/s",
+        .walkingStepLength: "m",
+        .walkingAsymmetryPercentage: "%",
+        .stairAscentSpeed: "m/s",
+        .stairDescentSpeed: "m/s",
+        .sixMinuteWalkTestDistance: "m",
+        // Nutrition — macronutrients
+        .dietaryEnergyConsumed: "kcal",
+        .dietaryProtein: "g",
+        .dietaryCarbohydrates: "g",
+        .dietaryFatTotal: "g",
+        .dietarySugar: "g",
+        .dietaryFiber: "g",
+        // Nutrition — micronutrients
+        .dietaryCholesterol: "mg",
+        .dietarySodium: "mg",
+        .dietaryIron: "mg",
+        .dietaryPotassium: "mg",
+        .dietaryCaffeine: "mg",
+        // Hydration
+        .dietaryWater: "mL",
     ]
 
     private let sampleTypeNames: [HKQuantityTypeIdentifier: String] = [
+        // Vitals & cardiovascular
         .heartRate: "heartRate",
         .restingHeartRate: "restingHeartRate",
         .heartRateVariabilitySDNN: "heartRateVariabilitySDNN",
+        .oxygenSaturation: "oxygenSaturation",
+        .respiratoryRate: "respiratoryRate",
+        .vo2Max: "vo2Max",
+        // Body composition
+        .bodyMass: "bodyMass",
+        .bodyFatPercentage: "bodyFatPercentage",
+        .leanBodyMass: "leanBodyMass",
+        // Activity & movement
         .stepCount: "stepCount",
         .activeEnergyBurned: "activeEnergyBurned",
         .basalEnergyBurned: "basalEnergyBurned",
         .distanceWalkingRunning: "distanceWalkingRunning",
-        .bodyMass: "bodyMass",
-        .bodyFatPercentage: "bodyFatPercentage",
-        .oxygenSaturation: "oxygenSaturation",
-        .respiratoryRate: "respiratoryRate",
-        .vo2Max: "vo2Max",
+        .appleExerciseTime: "appleExerciseTime",
+        .appleStandTime: "appleStandTime",
+        .walkingHeartRateAverage: "walkingHeartRateAverage",
+        .walkingSpeed: "walkingSpeed",
+        .walkingStepLength: "walkingStepLength",
+        .walkingAsymmetryPercentage: "walkingAsymmetryPercentage",
+        .stairAscentSpeed: "stairAscentSpeed",
+        .stairDescentSpeed: "stairDescentSpeed",
+        .sixMinuteWalkTestDistance: "sixMinuteWalkTestDistance",
+        // Nutrition — macronutrients
+        .dietaryEnergyConsumed: "dietaryEnergyConsumed",
+        .dietaryProtein: "dietaryProtein",
+        .dietaryCarbohydrates: "dietaryCarbohydrates",
+        .dietaryFatTotal: "dietaryFatTotal",
+        .dietarySugar: "dietarySugar",
+        .dietaryFiber: "dietaryFiber",
+        // Nutrition — micronutrients
+        .dietaryCholesterol: "dietaryCholesterol",
+        .dietarySodium: "dietarySodium",
+        .dietaryIron: "dietaryIron",
+        .dietaryPotassium: "dietaryPotassium",
+        .dietaryCaffeine: "dietaryCaffeine",
+        // Hydration
+        .dietaryWater: "dietaryWater",
     ]
 
     func queryAllSamples(
@@ -59,10 +145,25 @@ class HealthKitSyncManager {
         let lock = NSLock()
 
         let quantityTypes: [HKQuantityTypeIdentifier] = [
+            // Vitals & cardiovascular
             .heartRate, .restingHeartRate, .heartRateVariabilitySDNN,
-            .stepCount, .activeEnergyBurned, .basalEnergyBurned,
-            .distanceWalkingRunning, .bodyMass, .bodyFatPercentage,
             .oxygenSaturation, .respiratoryRate, .vo2Max,
+            // Body composition
+            .bodyMass, .bodyFatPercentage, .leanBodyMass,
+            // Activity & movement
+            .stepCount, .activeEnergyBurned, .basalEnergyBurned,
+            .distanceWalkingRunning, .appleExerciseTime, .appleStandTime,
+            .walkingHeartRateAverage, .walkingSpeed, .walkingStepLength,
+            .walkingAsymmetryPercentage, .stairAscentSpeed, .stairDescentSpeed,
+            .sixMinuteWalkTestDistance,
+            // Nutrition — macronutrients
+            .dietaryEnergyConsumed, .dietaryProtein, .dietaryCarbohydrates,
+            .dietaryFatTotal, .dietarySugar, .dietaryFiber,
+            // Nutrition — micronutrients
+            .dietaryCholesterol, .dietarySodium, .dietaryIron,
+            .dietaryPotassium, .dietaryCaffeine,
+            // Hydration
+            .dietaryWater,
         ]
 
         for identifier in quantityTypes {
@@ -157,8 +258,8 @@ class HealthKitSyncManager {
                     "value": value,
                     "valueFloat": String(format: "%.2f", value),
                     "unit": unitString,
-                    "startDate": ISO8601DateFormatter().string(from: sample.startDate),
-                    "endDate": ISO8601DateFormatter().string(from: sample.endDate),
+                    "startDate": HealthKitSyncManager.isoFormatter.string(from: sample.startDate),
+                    "endDate": HealthKitSyncManager.isoFormatter.string(from: sample.endDate),
                     "sourceName": sample.sourceRevision.source.name,
                     "sourceId": sample.sourceRevision.source.bundleIdentifier,
                     "metadata": [:] as [String: Any],
@@ -211,8 +312,8 @@ class HealthKitSyncManager {
                     "value": sample.value,
                     "valueFloat": String(sample.value),
                     "unit": "",
-                    "startDate": ISO8601DateFormatter().string(from: sample.startDate),
-                    "endDate": ISO8601DateFormatter().string(from: sample.endDate),
+                    "startDate": HealthKitSyncManager.isoFormatter.string(from: sample.startDate),
+                    "endDate": HealthKitSyncManager.isoFormatter.string(from: sample.endDate),
                     "sourceName": sample.sourceRevision.source.name,
                     "sourceId": sample.sourceRevision.source.bundleIdentifier,
                     "metadata": ["sleepStage": stage],
@@ -290,8 +391,8 @@ class HealthKitSyncManager {
                     "value": workout.workoutActivityType.rawValue,
                     "valueFloat": String(workout.duration),
                     "unit": "sec",
-                    "startDate": ISO8601DateFormatter().string(from: workout.startDate),
-                    "endDate": ISO8601DateFormatter().string(from: workout.endDate),
+                    "startDate": HealthKitSyncManager.isoFormatter.string(from: workout.startDate),
+                    "endDate": HealthKitSyncManager.isoFormatter.string(from: workout.endDate),
                     "sourceName": workout.sourceRevision.source.name,
                     "sourceId": workout.sourceRevision.source.bundleIdentifier,
                     "metadata": metadata,

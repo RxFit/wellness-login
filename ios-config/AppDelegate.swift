@@ -53,9 +53,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return
         }
 
+        // Check a representative sample across all categories
         let typesToCheck: [HKSampleType] = [
             HKQuantityType.quantityType(forIdentifier: .heartRate),
             HKQuantityType.quantityType(forIdentifier: .stepCount),
+            HKQuantityType.quantityType(forIdentifier: .bodyMass),
+            HKQuantityType.quantityType(forIdentifier: .dietaryEnergyConsumed),
+            HKQuantityType.quantityType(forIdentifier: .walkingSpeed),
             HKCategoryType.categoryType(forIdentifier: .sleepAnalysis),
         ].compactMap { $0 }
 
@@ -66,9 +70,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         let group = DispatchGroup()
         var hasNewData = false
+        let lock = NSLock()
 
-        let oneDayAgo = Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date()
-        let predicate = HKQuery.predicateForSamples(withStart: oneDayAgo, end: Date(), options: .strictStartDate)
+        let oneHourAgo = Calendar.current.date(byAdding: .hour, value: -1, to: Date()) ?? Date()
+        let predicate = HKQuery.predicateForSamples(withStart: oneHourAgo, end: Date(), options: .strictStartDate)
 
         task.expirationHandler = {
             // Clean up if system terminates the task early
@@ -83,7 +88,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 sortDescriptors: nil
             ) { _, results, _ in
                 if let results = results, !results.isEmpty {
+                    lock.lock()
                     hasNewData = true
+                    lock.unlock()
                 }
                 group.leave()
             }
@@ -91,7 +98,60 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         group.notify(queue: .main) {
-            task.setTaskCompleted(success: true)
+            if hasNewData {
+                self.performBackgroundSync { task.setTaskCompleted(success: true) }
+            } else {
+                task.setTaskCompleted(success: true)
+            }
+        }
+    }
+
+    private func performBackgroundSync(completion: @escaping () -> Void) {
+        let syncManager = HealthKitSyncManager()
+        let oneHourAgo = Calendar.current.date(byAdding: .hour, value: -1, to: Date()) ?? Date()
+
+        syncManager.queryAllSamples(
+            healthStore: healthStore,
+            startDate: oneHourAgo,
+            endDate: Date()
+        ) { samples, deviceInfo in
+            guard !samples.isEmpty else {
+                completion()
+                return
+            }
+
+            guard let url = URL(string: "https://app.rxfit.ai/api/healthkit/sync") else {
+                completion()
+                return
+            }
+
+            let body: [String: Any] = [
+                "samples": samples,
+                "deviceInfo": deviceInfo,
+            ]
+
+            guard let jsonData = try? JSONSerialization.data(withJSONObject: body) else {
+                completion()
+                return
+            }
+
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.httpBody = jsonData
+            request.timeoutInterval = 25
+
+            if let cookieURL = URL(string: "https://app.rxfit.ai"),
+               let cookies = HTTPCookieStorage.shared.cookies(for: cookieURL) {
+                let headers = HTTPCookie.requestHeaderFields(with: cookies)
+                for (key, value) in headers {
+                    request.setValue(value, forHTTPHeaderField: key)
+                }
+            }
+
+            URLSession.shared.dataTask(with: request) { _, _, _ in
+                completion()
+            }.resume()
         }
     }
 

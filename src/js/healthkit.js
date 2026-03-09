@@ -73,10 +73,13 @@ export class HealthKitService {
       });
 
       if (result.samples && result.samples.length > 0) {
-        await this.sendSamples(result.samples, result.deviceInfo);
+        const success = await this.sendSamples(result.samples, result.deviceInfo);
+        if (success) {
+          await this.updateLastSyncDate();
+        }
+      } else {
+        await this.updateLastSyncDate();
       }
-
-      await this.updateLastSyncDate();
     } catch (err) {
       console.error('Initial sync error:', err);
     }
@@ -99,10 +102,13 @@ export class HealthKitService {
       });
 
       if (result.samples && result.samples.length > 0) {
-        await this.sendSamples(result.samples, result.deviceInfo);
+        const success = await this.sendSamples(result.samples, result.deviceInfo);
+        if (success) {
+          await this.updateLastSyncDate();
+        }
+      } else {
+        await this.updateLastSyncDate();
       }
-
-      await this.updateLastSyncDate();
     } catch (err) {
       console.error('Sync error:', err);
     }
@@ -113,6 +119,8 @@ export class HealthKitService {
     for (let i = 0; i < samples.length; i += this.batchSize) {
       batches.push(samples.slice(i, i + this.batchSize));
     }
+
+    let allSucceeded = true;
 
     for (const batch of batches) {
       try {
@@ -132,11 +140,15 @@ export class HealthKitService {
 
         if (!response.ok) {
           console.error('Sync batch failed:', response.status);
+          allSucceeded = false;
         }
       } catch (err) {
         console.error('Sync batch error:', err);
+        allSucceeded = false;
       }
     }
+
+    return allSucceeded;
   }
 
   startBackgroundDelivery() {
