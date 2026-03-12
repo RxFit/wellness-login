@@ -67,8 +67,7 @@ Core native functionality:
 - Secure session management with cookie-based authentication
 
 Demo account credentials:
-⚠️ ACTION REQUIRED BEFORE SUBMISSION — Create a test account on app.rxfit.ai for the Apple review team:
-Email: [PROVIDE YOUR DEMO EMAIL]
-Password: [PROVIDE YOUR DEMO PASSWORD]
+Email: appstore-review@rxfitatx.com
+Password: RxFit2026!Review
 
 HealthKit is required for the app's core value proposition and cannot be replicated through the web interface alone.
