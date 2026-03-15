@@ -597,6 +597,15 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--accent-gold);
 }
 
+.footer-separator {
+  display: inline-block;
+  margin: 8px 4px 0;
+  font-size: 12px;
+  color: var(--text-muted);
+  opacity: 0.4;
+  user-select: none;
+}
+
 .footer a {
   color: var(--accent-gold);
   text-decoration: none;
